@@ -1,0 +1,133 @@
+"use client";
+
+import axios from "axios";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import React, { FormEvent, useState } from "react";
+import toast from "react-hot-toast";
+
+const SignUp = () => {
+  const [user, setUser] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState("");
+
+  const { push } = useRouter();
+
+  const signUpHandler = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!user.username || !user.email || !user.password) {
+      toast.error("All feilds are Necessary");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const res = await axios.post("/api/user/signup", user);
+
+      const { message, success } = res.data;
+
+      if (success) {
+        toast.success(message);
+        setUser({ username: "", email: "", password: "" });
+        push("/signin");
+        setLoading(false);
+      } else {
+        setErr(message);
+      }
+    } catch (error) {
+      toast.error("SignUp Failed");
+    }
+  };
+  return (
+    <form
+      onSubmit={signUpHandler}
+      className="h-[570px] w-[500px] border-[1px] rounded-2xl border-custom flex gap-2 flex-col items-center box-border px-12"
+    >
+      <p className="text-3xl font-bold text-gray-800 dark:text-gray-50 mt-10 mb-6">
+        Cyberix
+      </p>
+      <h1 className="font-semibold text-2xl">Sign Up with your account</h1>
+
+      <div className="h-10 w-full relative mt-10">
+        <input
+          type="text"
+          name="username"
+          id="username"
+          value={user.username}
+          onChange={(e) => setUser({ ...user, username: e.target.value })}
+          required
+          className="h-10 w-full border-[2px] border-gray-200 dark:border-gray-500 bg-lightGray outline-none transition-colors duration-[0.3s] focus:border-blue-500 px-2 rounded-lg peer dark:bg-gray-900 dark:focus:border-blue-500 "
+        />
+        <label
+          htmlFor="username"
+          className="absolute bg-lightGray rounded-md px-[2px] top-2 left-2 transition-all duration-[0.3s] cursor-pointer peer-valid:-translate-y-[18px] peer-valid:text-sm peer-valid:scale-90 peer-focus:-translate-y-[18px] peer-focus:text-sm peer-focus:scale-90 dark:bg-gray-900 dark:text-gray-300"
+        >
+          username
+        </label>
+      </div>
+      <div className="h-10 w-full relative mt-10">
+        <input
+          type="text"
+          name="email"
+          id="email"
+          value={user.email}
+          onChange={(e) => setUser({ ...user, email: e.target.value })}
+          required
+          className="h-10 w-full border-[2px] border-gray-200 dark:border-gray-500 bg-lightGray outline-none transition-colors duration-[0.3s] focus:border-blue-500 px-2 rounded-lg peer dark:bg-gray-900 dark:focus:border-blue-500 "
+        />
+        <label
+          htmlFor="email"
+          className="absolute bg-lightGray rounded-md px-[2px] top-2 left-2 transition-all duration-[0.3s] cursor-pointer peer-valid:-translate-y-[18px] peer-valid:text-sm peer-valid:scale-90 peer-focus:-translate-y-[18px] peer-focus:text-sm peer-focus:scale-90 dark:bg-gray-900 dark:text-gray-300"
+        >
+          email
+        </label>
+        <div className="px-2 absolute w-full flex justify-start -bottom-5">
+          <p className=" text-red-500 text-sm">{err}</p>
+        </div>
+      </div>
+      <div className="h-10 w-full relative mt-8">
+        <input
+          type="password"
+          name="password"
+          id="password"
+          value={user.password}
+          onChange={(e) => setUser({ ...user, password: e.target.value })}
+          required
+          className="h-10 w-full border-[2px] border-gray-200 dark:border-gray-500 bg-lightGray outline-none transition-colors duration-[0.3s] focus:border-blue-500 px-2 rounded-lg peer dark:bg-gray-900 dark:focus:border-blue-500 "
+        />
+        <label
+          htmlFor="password"
+          className="absolute bg-lightGray rounded-md px-[1px] top-2 left-2 transition-all duration-[0.3s] cursor-pointer peer-valid:-translate-y-[18px] peer-valid:text-sm peer-valid:scale-90 peer-focus:-translate-y-[18px] peer-focus:text-sm peer-focus:scale-90 dark:bg-gray-900 dark:text-gray-300"
+        >
+          password
+        </label>
+        <div className="px-2 absolute w-full flex gap-2 justify-start -bottom-4">
+          <span className="w-[100px] h-1 bg-green-400"></span>
+          <span className="w-[100px] h-1 bg-red-400"></span>
+          <span className="w-[100px] h-1 bg-red-400"></span>
+          <span className="w-[100px] h-1 bg-red-400"></span>
+        </div>
+      </div>
+      <button
+        type="submit"
+        className="w-full py-2 rounded-xl bg-darkGray dark:bg-gray-100 dark:text-gray-900 font-semibold text-gray-50 mt-10 transition-all active:scale-95 "
+      >
+        Sign Up
+      </button>
+      <p className="text-sm mt-2">
+        Alredy have account?
+        <Link href={"/signin"} className="text-blue-600">
+          Sign In
+        </Link>
+      </p>
+    </form>
+  );
+};
+
+export default SignUp;
