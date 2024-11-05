@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { useUserInfoContext } from "@/contexts/userInfoContext";
 
@@ -13,6 +13,7 @@ import { FaOpencart } from "react-icons/fa6";
 
 import Price from "./components/PriceDetails";
 import { useSigninContext } from "@/contexts/signinContext";
+import DialogBox from "../components/DialogBox";
 
 const CartPage = () => {
   const { info } = useUserInfoContext();
@@ -32,10 +33,9 @@ const CartPage = () => {
         id: info!.userId,
       });
       setItemsInCart(data.data);
-    } catch (error: any) {
-      console.error(error.message);
-    } finally {
       setLoading(false);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -49,40 +49,38 @@ const CartPage = () => {
   }, [info]);
 
   useEffect(() => {
-    if (itemsInCart) {
-      setTotalAmount(0);
-      setDiscount(0);
-      itemsInCart.map((prod) => {
-        setTotalAmount(
-          (prev) => prev + Number(prod.varient.salePrice) * prod.quantity
-        );
-        setDiscount(
-          (prev) =>
-            prev +
-            (Number(prod.varient.mrp) - Number(prod.varient.salePrice)) *
-              prod.quantity
-        );
-      });
-    }
+    if (!itemsInCart) return;
+
+    setTotalAmount(0);
+    setDiscount(0);
+
+    itemsInCart.map((prod) => {
+      setTotalAmount(
+        (prev) => prev + Number(prod.varient.salePrice) * prod.quantity
+      );
+      setDiscount(
+        (prev) =>
+          prev +
+          (Number(prod.varient.mrp) - Number(prod.varient.salePrice)) *
+            prod.quantity
+      );
+    });
   }, [itemsInCart]);
 
-  if (loading) {
-    return <Loader />;
-  }
-
-  console.log(info);
+  if (loading) return <Loader />;
 
   return (
     <div className="h-full w-full px-4 py-2 ">
-      {itemsInCart && itemsInCart.length > 0 ? (
+      {itemsInCart && itemsInCart.length ? (
         <>
           <h1 className="text-gray-900 dark:text-gray-50 font-semibold text-3xl">
-            Shopping Cart
+            <button>Shopping Cart</button>
           </h1>
           <div className="h-[800px] w-full flex">
             <main className="h-full w-[1200px] box-border mt-6 px-4 overflow-y-auto rounded-lg">
               {itemsInCart.map((product) => (
                 <CartItem
+                  _id={product._id}
                   brandName={product.brandName}
                   category={product.category}
                   productName={product.productName}
@@ -103,12 +101,14 @@ const CartPage = () => {
           </div>
         </>
       ) : (
-        <div className="h-full w-full flex flex-col items-center justify-center">
-          <div className="h-20 w-20 mb-2">
-            <FaOpencart className="h-full w-full" />
+        <>
+          <div className="h-full w-full flex flex-col items-center justify-center">
+            <div className="h-20 w-20 mb-2">
+              <FaOpencart className="h-full w-full" />
+            </div>
+            <p className="text-2xl font-semibold ">No Item Added In Cart</p>
           </div>
-          <p className="text-2xl font-semibold ">No Item Added In Cart</p>
-        </div>
+        </>
       )}
     </div>
   );

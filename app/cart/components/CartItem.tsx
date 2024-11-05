@@ -5,9 +5,9 @@ import React, { useEffect, useState } from "react";
 
 import axios from "axios";
 import { useUserInfoContext } from "@/contexts/userInfoContext";
-import { CartItemProps } from "@/lib/definations";
-import Link from "next/link";
 import { useCartContext } from "@/contexts/cartContext";
+import Link from "next/link";
+import DialogBox from "@/app/components/DialogBox";
 
 const CartItem = ({
   pid,
@@ -23,6 +23,8 @@ const CartItem = ({
   const { setItemsInCart } = useCartContext();
 
   const [quantityCount, setQuantityCount] = useState(quantity);
+
+  const [openDailogBox, setOpenDialogBox] = useState(false);
 
   const removeFromCart = async () => {
     try {
@@ -51,6 +53,7 @@ const CartItem = ({
       });
 
       console.log(data);
+      setOpenDialogBox(false);
     } catch (error: any) {
       console.error(error.message);
     }
@@ -70,6 +73,14 @@ const CartItem = ({
 
   return (
     <div className="h-fit w-full flex justify-center mb-6 relative">
+      <DialogBox
+        isOpen={openDailogBox}
+        setIsOpen={setOpenDialogBox}
+        title="Are you sure you want to remove ?"
+        primaryBtnText="Remove"
+        secondaryBtnText="Cancel"
+        primaryBtnAction={removeFromCart}
+      />
       <div className=" h-full bg-white dark:bg-gray-950 w-11/12 rounded-xl flex flex-col gap-4 p-6 box-border transition-all duration-300">
         <Link href={``} className="h-fit w-full flex gap-3">
           <div className="h-28 w-28  flex justify-center items-center transition-all ">
@@ -123,7 +134,7 @@ const CartItem = ({
           </button>
         </div>
         <button
-          onClick={() => removeFromCart()}
+          onClick={() => setOpenDialogBox(true)}
           className="absolute right-24 text-base font-semibold text-red-500 cursor-pointer active:scale-95"
         >
           REMOVE

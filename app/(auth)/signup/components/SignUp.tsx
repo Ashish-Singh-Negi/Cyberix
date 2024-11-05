@@ -42,6 +42,7 @@ const SignUp = () => {
       }
     } catch (error) {
       toast.error("SignUp Failed");
+      console.error(error);
     }
   };
   return (

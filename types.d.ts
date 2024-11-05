@@ -1,10 +1,10 @@
-export interface TokenData {
+interface TokenData {
   id: string;
   username: string;
   email: string;
 }
 
-export type Category =
+type Category =
   | "Category"
   | "Mobile"
   | "Laptop"
@@ -19,7 +19,7 @@ export type Category =
   | "Monitor"
   | "Storage";
 
-export type Reviews = {
+type Reviews = {
   _id: string;
   username: string;
   rating: number;
@@ -44,7 +44,8 @@ type CommonProps = {
   reviews: Reviews[];
 };
 
-export type CartItemProps = {
+type CartItemProps = {
+  _id: string;
   pid: string;
   category: string;
   brandName: string;
@@ -53,9 +54,10 @@ export type CartItemProps = {
   quantity: number;
   varient: LaptopVarient | MobileVarient;
   img: string;
+  isBuying?: boolean;
 };
 
-export type ProductCardProps = {
+type ProductCardProps = {
   pid: string;
   category: string;
   brandName: string;
@@ -68,13 +70,13 @@ export type ProductCardProps = {
   img: string;
 };
 
-export type MobileProps = CommonProps & {
+type MobileProps = CommonProps & {
   rams: string[];
   storages: string[];
   varients: MobileVarient[];
 };
 
-export type MobileVarient = {
+type MobileVarient = {
   memory: string;
   storage: string;
   mrp: string;
@@ -82,17 +84,17 @@ export type MobileVarient = {
   inStock: InStock[];
 };
 
-export type InStock = {
+type InStock = {
   color: string;
   stock: number;
 };
 
-export type Color = {
+type Color = {
   color: string;
   imgURLs: string[];
 };
 
-export type LaptopProps = CommonProps & {
+type LaptopProps = CommonProps & {
   display: string;
   rams: string[];
   storages: string[];
@@ -101,7 +103,7 @@ export type LaptopProps = CommonProps & {
   varients: LaptopVarient[];
 };
 
-export type LaptopVarient = {
+type LaptopVarient = {
   memory: string;
   storage: string;
   processor: string;

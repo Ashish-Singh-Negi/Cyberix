@@ -1,23 +1,21 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-
-import Image from "next/image";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import Image from "next/image";
+import axios from "axios";
+import Link from "next/link";
 
 import { MdStar } from "react-icons/md";
 
-import axios from "axios";
-
-import { MobileProps, MobileVarient } from "@/lib/definations";
-
 import ProductImages from "@/app/components/ProductImage";
-import AddToCartBtn, { BuyNowBtn } from "@/app/components/Btns";
 
 import Rating from "./Rating";
 import ReviewsCard from "./ReviewsCard";
+
+import AddToCartBtn, { BuyNowBtn } from "@/app/components/Btns";
 import Loader from "@/app/components/Loader";
+
 import { useUserInfoContext } from "@/contexts/userInfoContext";
 
 const MobileDetails = () => {
@@ -35,7 +33,7 @@ const MobileDetails = () => {
   const [mobileDetails, setMobileDetails] = useState<MobileProps | null>(null);
 
   const [color, setColor] = useState<string>(searchParams.get("color")!);
-  const [img, setImg] = useState<string>("");
+  const [img, setImg] = useState<string | null>(null);
 
   const [inStock, setInStock] = useState<number | null>(null);
 
@@ -45,12 +43,33 @@ const MobileDetails = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    async function getMobileDetails(url: string, pid: string, retries: number) {
+      try {
+        setLoading(true);
+        setError(false);
+
+        const { data } = await axios.post(url, {
+          productID: pid,
+        });
+
+        console.log(data);
+        setMobileDetails(data.data);
+
+        setLoading(false);
+      } catch (error) {
+        if (retries > 0) {
+          console.warn(`Retrying... (${retries} attempts left)`);
+          return getMobileDetails(url, pid, retries - 1);
+        }
+        console.error(error);
+        setError(true);
+      }
+    }
+
     const id = setTimeout(() => {
-      getMobileDetails();
-    }, 5000);
-    return () => {
-      clearTimeout(id);
-    };
+      getMobileDetails(`/api/product/${category}/get`, pid!, 3);
+    }, 1000);
+    return () => clearTimeout(id);
   }, []);
 
   useEffect(() => {
@@ -66,44 +85,44 @@ const MobileDetails = () => {
   }, [color, mobileDetails]);
 
   useEffect(() => {
-    let temp = 0;
-    mobileDetails?.varients.map((value) => {
-      if (memory === value.memory && storage === value.storage) {
-        setVarient(value);
-        value.inStock.map((inStock) => {
-          if (color === inStock.color) {
-            setInStock(inStock.stock);
-          }
-        });
-      } else {
-        temp++;
-      }
+    // let temp = 0;
+    // mobileDetails?.varients.map((value) => {
+    //   if (memory === value.memory && storage === value.storage) {
+    //     setVarient(value);
+    //     value.inStock.map((inStock) => {
+    //       if (color === inStock.color) {
+    //         setInStock(inStock.stock);
+    //       }
+    //     });
+    //   } else {
+    //     temp++;
+    //   }
 
-      if (temp === mobileDetails.varients.length) {
+    //   if (temp === mobileDetails.varients.length) {
+    //     setVarient(null);
+    //     setInStock(null);
+    //   }
+    // });
+    if (mobileDetails) {
+      let foundVarient = null;
+      for (const value of mobileDetails.varients) {
+        if (memory === value.memory && storage === value.storage) {
+          foundVarient = value;
+          const stockInfo = value.inStock.find(
+            (inStock) => inStock.color === color
+          );
+          setInStock(stockInfo ? stockInfo.stock : null);
+          break;
+        }
+      }
+      if (!foundVarient) {
         setVarient(null);
         setInStock(null);
+      } else {
+        setVarient(foundVarient);
       }
-    });
-  }, [color, memory, storage, mobileDetails]);
-
-  const getMobileDetails = async () => {
-    try {
-      setLoading(true);
-      setError(false);
-      const productID = searchParams.get("pid");
-
-      const { data } = await axios.post(`/api/product/${category}/get`, {
-        productID,
-      });
-
-      console.log(data);
-      setMobileDetails(data.data);
-    } catch (error) {
-      setError(true);
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [color, memory, storage, mobileDetails]);
 
   return (
     <>
@@ -120,19 +139,21 @@ const MobileDetails = () => {
                   colorsImgs={mobileDetails.color}
                   defaultImgs={mobileDetails.defaultImgs!}
                   color={color}
-                  img={img}
+                  img={img!}
                   setImg={setImg}
                 />
               )}
             </div>
             <div className="h-[500px] w-[416px] flex flex-col">
-              <Image
-                className="border-gray-300 h-[416px] w-[416px] "
-                src={img}
-                alt="Image"
-                height={416}
-                width={416}
-              />
+              {img && (
+                <Image
+                  className="border-gray-300 h-[416px] w-[416px] "
+                  src={img}
+                  alt="Image"
+                  height={416}
+                  width={416}
+                />
+              )}
               <div className="h-[84px] w-full text-lg font-semibold flex items-center gap-2">
                 <AddToCartBtn
                   pid={pid!}
@@ -141,8 +162,17 @@ const MobileDetails = () => {
                   color={color}
                   varient={varient!}
                   imgs={mobileDetails?.color!}
+                  isBuying={false}
                 />
-                <BuyNowBtn varient={varient!} />
+                <BuyNowBtn
+                  pid={pid!}
+                  brandName={mobileDetails?.brandName!}
+                  productName={mobileDetails?.productName!}
+                  color={color}
+                  varient={varient!}
+                  imgs={mobileDetails?.color!}
+                  isBuying={true}
+                />
               </div>
             </div>
           </div>
@@ -285,7 +315,7 @@ const MobileDetails = () => {
               </p>
               <Rating
                 rating={mobileDetails?.rating!}
-                noOfReviews={mobileDetails?.reviews.length!}
+                totalReviews={mobileDetails?.reviews.length!}
                 reviews={mobileDetails?.reviews!}
               />
             </div>

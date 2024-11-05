@@ -6,8 +6,6 @@ import { connectToDB } from "@/lib/connectToDB";
 import { NextRequest, NextResponse } from "next/server";
 import { disconnectToDB } from "@/lib/disconnectToDB";
 
-import { TokenData } from "@/lib/definations";
-
 export async function POST(request: NextRequest) {
   await connectToDB();
 

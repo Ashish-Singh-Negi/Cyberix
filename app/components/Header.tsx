@@ -17,9 +17,9 @@ const Header = () => {
   const [isActive, setIsActive] = useState(false);
 
   const { menuOpen, setMenuOpen } = useMenuContext();
-  const { info, setInfo } = useUserInfoContext();
+  const { setInfo } = useUserInfoContext();
   const { signin, setSignin } = useSigninContext();
-  const { itemsInCart, setItemsInCart } = useCartContext();
+  const { setItemsInCart } = useCartContext();
 
   const getProfile = async () => {
     const { data } = await axios.get("/api/user/profile");
@@ -38,6 +38,7 @@ const Header = () => {
       email: data.data.email,
       address: data.data.address,
     });
+    
     setItemsInCart(data.data.itemsInCart);
   };
 

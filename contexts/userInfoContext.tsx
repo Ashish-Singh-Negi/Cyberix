@@ -1,12 +1,12 @@
 "use client";
 
-import { CartItemProps } from "@/lib/definations";
 import {
   Dispatch,
   ReactNode,
   SetStateAction,
   createContext,
   useContext,
+  useEffect,
   useState,
 } from "react";
 
@@ -16,7 +16,7 @@ type UserInfo = {
   email: string | null;
   address: {
     name: string;
-    phoneNum: number;
+    phoneNumber: number | null;
     pincode: number;
     locality: string;
     address: string;
@@ -26,7 +26,7 @@ type UserInfo = {
 };
 
 type UserInfoContext = {
-  info: UserInfo | null;
+  info: UserInfo | null; 
   setInfo: Dispatch<SetStateAction<UserInfo | null>>;
 };
 
@@ -38,6 +38,10 @@ export default function UserInfoContextProvider({
   children: ReactNode;
 }) {
   const [info, setInfo] = useState<UserInfo | null>(null);
+
+  useEffect(() => {
+    console.log(info);
+  }, [info]);
 
   return (
     <UserInfoContext.Provider

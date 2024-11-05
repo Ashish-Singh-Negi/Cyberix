@@ -1,5 +1,17 @@
 import mongoose, { Schema, models } from "mongoose";
 
+const Items = new Schema({
+  pid: String,
+  category: String,
+  brandName: String,
+  productName: String,
+  color: String,
+  quantity: Number,
+  varient: Object,
+  img: String,
+  isBuying: Boolean,
+});
+
 const UserSchema = new Schema({
   username: {
     type: String,
@@ -17,9 +29,13 @@ const UserSchema = new Schema({
     type: Boolean,
     default: false,
   },
-  address: Object,
+  address: {
+    type: Object,
+    default: null,
+  },
   orders: Array,
-  itemsInCart: Array,
+  itemsInCart: [Items],
+  itemsToBuy: [Items],
   forgotPasswordToken: String,
   forgotPasswordTokenExpiry: Date,
   verifyToken: String,

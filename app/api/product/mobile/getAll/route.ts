@@ -20,10 +20,15 @@ export async function GET() {
       }
     );
   } catch (error) {
-    return NextResponse.json({
-      success: false,
-      message: "Oops! No Product Found",
-    });
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Oops! No Product Found",
+      },
+      {
+        status: 404,
+      }
+    );
   } finally {
     await disconnectToDB();
   }

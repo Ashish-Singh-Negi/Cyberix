@@ -17,6 +17,7 @@ import {
 import { ImGithub } from "react-icons/im";
 import { FcGoogle } from "react-icons/fc";
 import { useUserInfoContext } from "@/contexts/userInfoContext";
+import { useCartContext } from "@/contexts/cartContext";
 
 const SignIn = () => {
   const [user, setUser] = useState({
@@ -26,6 +27,7 @@ const SignIn = () => {
 
   const { setSignin, setSigninMethod } = useSigninContext();
   const { info, setInfo } = useUserInfoContext();
+  const { setItemsInCart } = useCartContext();
 
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(false);
@@ -52,23 +54,39 @@ const SignIn = () => {
         return;
       }
 
-      (async () => {
-        const { data } = await axios.get("/api/user/profile");
+      const getProfile = async (url: string, retries: number) => {
+        try {
+          const { data } = await axios.get(url);
 
-        setInfo({
-          ...info,
-          userId: data.data._id,
-          username: data.data.username,
-          email: data.data.email,
-          address: data.data.address,
-        });
-      })();
+          console.log(data.data);
 
+          setInfo({
+            ...info,
+            userId: data.data._id,
+            username: data.data.username,
+            email: data.data.email,
+            address: data.data.address,
+          });
+
+          setItemsInCart(data.data.itemsInCart);
+
+        } catch (error) {
+          if (retries > 0) {
+            console.warn(`Retrying... (${retries} attempts left)`);
+            return getProfile(url, retries - 1);
+          }
+          console.error(error);
+        }
+      };
+      
+      getProfile("/api/user/profile", 3);
+      
       toast.success(res.data.message);
-      back();
       setSignin(true);
       setLoading(false);
-    } catch (error: any) {
+
+      back();
+    } catch (error) {
       console.error(error);
     }
   };

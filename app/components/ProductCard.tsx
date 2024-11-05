@@ -6,8 +6,6 @@ import React, { useEffect, useState } from "react";
 
 import { MdStar } from "react-icons/md";
 
-import { ProductCardProps } from "@/lib/definations";
-
 const ProductCard = ({
   pid,
   category,

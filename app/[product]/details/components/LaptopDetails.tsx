@@ -7,8 +7,8 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { MdStar } from "react-icons/md";
-import { MdOutlineEdit } from "react-icons/md";
-import { MdOutlineKeyboardArrowDown } from "react-icons/md";
+// import { MdOutlineEdit } from "react-icons/md";
+// import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 
 import { LaptopProps } from "@/lib/definations";
 
@@ -17,6 +17,7 @@ import Rating from "./Rating";
 import ProductImages from "@/app/components/ProductImage";
 import Loader from "@/app/components/Loader";
 import AddToCartBtn, { BuyNowBtn } from "@/app/components/Btns";
+import { useUserInfoContext } from "@/contexts/userInfoContext";
 
 const LaptopDetails = () => {
   const searchParams = useSearchParams();
@@ -28,6 +29,8 @@ const LaptopDetails = () => {
   const memory = searchParams.get("memory");
   const cpu = searchParams.get("cpu");
   const gpu = searchParams.get("gpu");
+
+  const { info } = useUserInfoContext();
 
   const [laptopDetails, setlaptopDetails] = useState<LaptopProps | null>(null);
 
@@ -138,7 +141,7 @@ const LaptopDetails = () => {
               />
               <div className="h-[84px] w-full text-lg font-semibold flex items-center gap-2">
                 {/* <AddToCartBtn  /> */}
-                <BuyNowBtn />
+                {/* <BuyNowBtn varient={} /> */}
               </div>
             </div>
           </div>
@@ -318,11 +321,27 @@ const LaptopDetails = () => {
               </p>
               <Rating
                 rating={laptopDetails?.rating!}
-                reviews={laptopDetails?.reviews.length!}
+                reviews={laptopDetails?.reviews!}
+                noOfReviews={laptopDetails?.reviews.length!}
               />
             </div>
-            {[1, 2, 3, 4, 5, 6].map((reviews) => (
-              <ReviewsCard key={reviews} />
+            {laptopDetails?.reviews.map((review) => (
+              <ReviewsCard
+                userid={info?.userId!}
+                user={info?.username!}
+                key={review.username}
+                pid={pid!}
+                rid={review._id}
+                rating={review.rating}
+                username={review.username}
+                heading={review.heading}
+                review={review.review}
+                likes={review.likes}
+                dislikes={review.dislikes}
+                // likedBy={review.likedBy}
+                // dislikedBy={review.dislikedBy}
+                createdAt={review.createdAt}
+              />
             ))}
           </main>
         </main>

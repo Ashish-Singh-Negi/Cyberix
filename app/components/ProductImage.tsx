@@ -1,14 +1,13 @@
 import Image from "next/image";
 
 import React, { Dispatch, SetStateAction } from "react";
-import { Color } from "@/lib/definations";
 
 type ProductImagesProps = {
   colorsImgs: Color[];
   color: string;
   img: string;
   defaultImgs: string[];
-  setImg: Dispatch<SetStateAction<string>>;
+  setImg: Dispatch<SetStateAction<string | null>>;
 };
 
 const ProductImages = ({

@@ -1,196 +1,110 @@
-import { Reviews } from "@/lib/definations";
 import React, { useEffect, useState } from "react";
 
 import { TiStarFullOutline } from "react-icons/ti";
 
 const Rating = ({
   rating,
-  noOfReviews,
+  totalReviews,
   reviews,
 }: {
   rating: number;
-  noOfReviews: number;
+  totalReviews: number;
   reviews: Reviews[];
 }) => {
-  const [five, setFive] = useState(0);
-  const [four, setFour] = useState(0);
-  const [three, setThree] = useState(0);
-  const [two, setTwo] = useState(0);
-  const [one, setOne] = useState(0);
-
-  const [fifthBar, setFifthBar] = useState("");
-  const [fourthBar, setFourthBar] = useState("");
-  const [thirdBar, setThirdBar] = useState("");
-  const [secondBar, setSecondBar] = useState("");
-  const [firstBar, setFirstBar] = useState("");
+  const [counts, setCounts] = useState({
+    five: 0,
+    four: 0,
+    three: 0,
+    two: 0,
+    one: 0,
+  });
+  const [bars, setBars] = useState({
+    fifth: "0%",
+    fourth: "0%",
+    third: "0%",
+    second: "0%",
+    first: "0%",
+  });
 
   useEffect(() => {
-    let fiveCount = 0;
-    let fourCount = 0;
-    let threeCount = 0;
-    let twoCount = 0;
-    let oneCount = 0;
+    const ratingsCount = { five: 0, four: 0, three: 0, two: 0, one: 0 };
 
-    reviews.map((value) => {
-      if (value.rating === 5) fiveCount++;
-      else if (value.rating === 4) fourCount++;
-      else if (value.rating === 3) threeCount++;
-      else if (value.rating === 2) twoCount++;
-      else if (value.rating === 1) oneCount++;
+    if (!reviews) return;
+
+    reviews.map((review) => {
+      if (review.rating === 5) ratingsCount.five++;
+      else if (review.rating === 4) ratingsCount.four++;
+      else if (review.rating === 3) ratingsCount.three++;
+      else if (review.rating === 2) ratingsCount.two++;
+      else if (review.rating === 1) ratingsCount.one++;
     });
 
-    // calcubar(fiveCount, fourCount, threeCount, twoCount, oneCount);
-
-    const res1 = calcuRatingBar(
-      fiveCount,
-      setFifthBar,
-      {
-        value: fourCount,
-        setState: setFourthBar,
-      },
-      {
-        value: threeCount,
-        setState: setThirdBar,
-      },
-      {
-        value: twoCount,
-        setState: setSecondBar,
-      },
-      {
-        value: oneCount,
-        setState: setFirstBar,
-      }
-    );
-
-    const res2 = calcuRatingBar(
-      fourCount,
-      setFourthBar,
-      {
-        value: fiveCount,
-        setState: setFifthBar,
-      },
-      {
-        value: threeCount,
-        setState: setThirdBar,
-      },
-      {
-        value: twoCount,
-        setState: setSecondBar,
-      },
-      {
-        value: oneCount,
-        setState: setFirstBar,
-      }
-    );
-
-    setFive(fiveCount);
-    setFour(fourCount);
-    setThree(threeCount);
-    setTwo(twoCount);
-    setOne(oneCount);
+    setCounts(ratingsCount);
   }, [reviews]);
 
-  const calcuRatingBar = (
-    highValue: number,
-    setState: React.Dispatch<React.SetStateAction<string>>,
-    ...lowValue: {
-      setState: React.Dispatch<React.SetStateAction<string>>;
-      value: number;
-    }[]
-  ) => {
-    let count = 0;
-    let results = [];
+  useEffect(() => {
+    const calculateBarWidths = () => {
+      const total = Object.values(counts).reduce(
+        (prev, curr) => prev + curr,
+        0
+      );
+      if (total === 0) return;
 
-    for (let i = 0; i < lowValue.length; i++) {
-      if (highValue > lowValue[i].value) {
-        const res = `w-[${
-          Number((lowValue[i].value / highValue).toFixed(1)) * 100
-        }%]`;
+      let barsWidth: {
+        fifth: string;
+        fourth: string;
+        third: string;
+        second: string;
+        first: string;
+      };
 
-        results.push(res);
+      let highestRate;
 
-        count++;
+      if (
+        counts.five > counts.four &&
+        counts.five > counts.three &&
+        counts.five > counts.two &&
+        counts.five > counts.one
+      ) {
+        highestRate = counts.five;
+      } else if (
+        counts.four > counts.five &&
+        counts.four > counts.three &&
+        counts.four > counts.two &&
+        counts.four > counts.one
+      ) {
+        highestRate = counts.four;
+      } else if (
+        counts.three > counts.five &&
+        counts.three > counts.four &&
+        counts.three > counts.two &&
+        counts.three > counts.one
+      ) {
+        highestRate = counts.three;
+      } else if (
+        counts.two > counts.five &&
+        counts.two > counts.four &&
+        counts.two > counts.three &&
+        counts.two > counts.one
+      ) {
+        highestRate = counts.two;
       } else {
-        break;
+        highestRate = counts.one;
       }
-    }
 
-    if (count === 4) {
-      for (let i = 0; i < results.length; i++) {
-        console.log(results[i]);
+      barsWidth = {
+        fifth: `${(counts.five / highestRate) * 100}%`,
+        fourth: `${(counts.four / highestRate) * 100}%`,
+        third: `${(counts.three / highestRate) * 100}%`,
+        second: `${(counts.two / highestRate) * 100}%`,
+        first: `${(counts.one / highestRate) * 100}%`,
+      };
 
-        lowValue[i].setState(results[i]);
-      }
-      setState(`w-[100%]`);
-    }
-  };
+      setBars(barsWidth!);
+    };
 
-  // const calcubar = (
-  //   fiveCount: number,
-  //   fourCount: number,
-  //   threeCount: number,
-  //   twoCount: number,
-  //   oneCount: number
-  // ) => {
-  //   if (
-  //     fiveCount > fourCount &&
-  //     fiveCount > threeCount &&
-  //     fiveCount > twoCount &&
-  //     fiveCount > oneCount
-  //   ) {
-  //     setFifthBar(` w-[100%] `);
-  //     setFourthBar(
-  //       ` w-[${Number((fourCount / fiveCount).toFixed(1)) * 100}%] `
-  //     );
-  //     setThirdBar(`w-[${Number((threeCount / fiveCount).toFixed(1)) * 100}%]`);
-  //     setSecondBar(`w-[${Number((twoCount / fiveCount).toFixed(1)) * 100}%]`);
-  //     setFirstBar(`w-[${Number((oneCount / fiveCount).toFixed(1)) * 100}%]`);
-  //   } else if (
-  //     fourCount > fiveCount &&
-  //     fourCount > threeCount &&
-  //     fourCount > twoCount &&
-  //     fourCount > oneCount
-  //   ) {
-  //     setFifthBar(` w-[${Number((fiveCount / fourCount).toFixed(1)) * 100}%] `);
-  //     setFourthBar(` w-[100%] `);
-  //     setThirdBar(`w-[${Number((threeCount / fourCount).toFixed(1)) * 100}%]`);
-  //     setSecondBar(`w-[${Number((twoCount / fourCount).toFixed(1)) * 100}%]`);
-  //     setFirstBar(`w-[${Number((oneCount / fourCount).toFixed(1)) * 100}%]`);
-  //   } else if (
-  //     threeCount > fiveCount &&
-  //     threeCount > fourCount &&
-  //     threeCount > twoCount &&
-  //     threeCount > oneCount
-  //   ) {
-  //     setFifthBar(`w-[${Number((fiveCount / threeCount).toFixed(1)) * 100}%]`);
-  //     setFourthBar(`w-[${Number((fourCount / threeCount).toFixed(1)) * 100}%]`);
-  //     setThirdBar(`w-[100%]`);
-  //     setSecondBar(`w-[${Number((twoCount / threeCount).toFixed(1)) * 100}%]`);
-  //     setFirstBar(`w-[${Number((oneCount / threeCount).toFixed(1)) * 100}%]`);
-  //   } else if (
-  //     twoCount > fiveCount &&
-  //     twoCount > fourCount &&
-  //     twoCount > threeCount &&
-  //     twoCount > oneCount
-  //   ) {
-  //     setFifthBar(`w-[${Number((fiveCount / twoCount).toFixed(1)) * 100}%]`);
-  //     setFourthBar(`w-[${Number((fourCount / twoCount).toFixed(1)) * 100}%]`);
-  //     setThirdBar(`w-[${Number((threeCount / twoCount).toFixed(1)) * 100}%]`);
-  //     setSecondBar(`w-[100%]`);
-  //     setFirstBar(`w-[${Number((oneCount / twoCount).toFixed(1)) * 100}%]`);
-  //   } else if (
-  //     oneCount > fiveCount &&
-  //     oneCount > fourCount &&
-  //     oneCount > threeCount &&
-  //     oneCount > twoCount
-  //   ) {
-  //     setFifthBar(`w-[${Number((fiveCount / oneCount).toFixed(1)) * 100}%]`);
-  //     setFourthBar(`w-[${Number((fourCount / oneCount).toFixed(1)) * 100}%]`);
-  //     setThirdBar(`w-[${Number((threeCount / oneCount).toFixed(1)) * 100}%]`);
-  //     setSecondBar(`w-[${Number((twoCount / oneCount).toFixed(1)) * 100}%]`);
-  //     setFirstBar(`w-[100%]`);
-  //   }
-  // };
+    calculateBarWidths();
+  }, [counts]);
 
   return (
     <div className="h-44 p-6 w-full flex items-center">
@@ -198,7 +112,7 @@ const Rating = ({
         <p className="font-normal text-4xl text-center">
           {rating}
           <span>
-            <TiStarFullOutline size={24} className="inline " />
+            <TiStarFullOutline size={24} className="inline" />
           </span>
         </p>
         <div>
@@ -206,7 +120,7 @@ const Rating = ({
             {rating} Ratings &{" "}
           </p>
           <p className="text-sm font-medium text-center text-gray-400 ">
-            {noOfReviews} Reviews{" "}
+            {totalReviews} Reviews{" "}
           </p>
         </div>
       </div>
@@ -215,41 +129,56 @@ const Rating = ({
           <p className="w-[10px] text-base mr-1">5</p>
           <TiStarFullOutline size={14} />
           <div className=" h-2 w-[400px] bg-gray-200 ml-4 rounded-lg">
-            <p className={`h-2 ${fifthBar} bg-blue-500 rounded-lg`}></p>
+            <p
+              style={{ width: bars.fifth }}
+              className={`h-2 bg-blue-500 rounded-lg transition-all`}
+            ></p>
           </div>
-          <span className="ml-3 font-medium text-sm">{five}</span>
+          <span className="ml-3 font-medium text-sm">{counts.five}</span>
         </div>
         <div className="h-6 w-full flex items-center">
           <p className="w-[10px] text-base mr-1">4</p>
           <TiStarFullOutline size={14} />
           <div className="h-2 w-[400px] bg-gray-200 ml-4 rounded-lg">
-            <p className={`h-2 ${fourthBar} bg-blue-500 rounded-lg`}></p>
+            <p
+              style={{ width: bars.fourth }}
+              className={`h-2 bg-blue-500 rounded-lg transition-all`}
+            ></p>
           </div>
-          <span className="ml-3 font-medium text-sm">{four}</span>
+          <span className="ml-3 font-medium text-sm">{counts.four}</span>
         </div>
         <div className="h-6 w-full flex items-center">
           <p className="w-[10px] text-base mr-1">3</p>
           <TiStarFullOutline size={14} />
           <div className="h-2 w-[400px] bg-gray-200 ml-4 rounded-lg">
-            <p className={`h-2 ${thirdBar} bg-blue-500 rounded-lg `}></p>
+            <p
+              style={{ width: bars.third }}
+              className={`h-2 bg-blue-500 rounded-lg transition-all `}
+            ></p>
           </div>
-          <span className="ml-3 font-medium text-sm">{three}</span>
+          <span className="ml-3 font-medium text-sm">{counts.three}</span>
         </div>
         <div className="h-6 w-full flex items-center">
           <p className="w-[10px] text-base mr-1">2</p>
           <TiStarFullOutline size={14} />
           <div className="h-2 w-[400px] bg-gray-200 ml-4 rounded-lg">
-            <p className={`h-2 ${secondBar} bg-yellow-500 rounded-lg `}></p>
+            <p
+              style={{ width: bars.second }}
+              className={`h-2 bg-yellow-500 rounded-lg transition-all`}
+            ></p>
           </div>
-          <span className="ml-3 font-medium text-sm">{two}</span>
+          <span className="ml-3 font-medium text-sm">{counts.two}</span>
         </div>
         <div className="h-6 w-full flex items-center">
           <p className="w-[10px] text-base mr-1">1</p>
           <TiStarFullOutline size={14} />
           <div className="h-2 w-[400px] bg-gray-200 ml-4 rounded-lg">
-            <p className={`h-2 ${firstBar} bg-red-600 rounded-lg `}></p>
+            <p
+              style={{ width: bars.first }}
+              className={`h-2 bg-red-600 rounded-lg transition-all`}
+            ></p>
           </div>
-          <span className="ml-3 font-medium text-sm">{one}</span>
+          <span className="ml-3 font-medium text-sm">{counts.one}</span>
         </div>
       </div>
     </div>

@@ -7,9 +7,9 @@ import { getDataFromToken } from "@/lib/getDataFromToken";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
+  await connectToDB();
+  
   try {
-    await connectToDB();
-
     const userId = await getDataFromToken(request);
 
     const user = await User.findById(userId).select([

@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 type Input = {
+  type: string;
   name: string;
   count: string | number;
   label?: string;
@@ -8,17 +9,17 @@ type Input = {
   setState: React.Dispatch<React.SetStateAction<string>>;
 };
 
-const Input = ({ name, count, label, state, setState }: Input) => {
+const Input = ({ type, name, count, label, state, setState }: Input) => {
   return (
     <div className="h-10 w-full relative flex ">
       <input
-        type="text"
+        type={`${type}`}
         name={`${name}-${count}`}
         id={`${name}-${count}`}
         value={state}
         onChange={(e) => setState(e.target.value)}
         required
-        className="h-10 w-full border-2 border-gray-300  dark:border-custom outline-none transition-colors duration-[0.3s] focus:border-blue-500 px-2 rounded-lg peer dark:bg-gray-900 dark:focus:border-blue-500 "
+        className="h-10 w-full border-2 border-gray-300  dark:border-custom outline-none transition-colors duration-[0.3s] focus:border-blue-500 px-2 rounded-lg peer dark:bg-gray-900 dark:focus:border-blue-500"
       />
       <label
         htmlFor={`${name}-${count}`}

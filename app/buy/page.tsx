@@ -10,7 +10,6 @@ import SignIn from "../(auth)/signin/components/SignIn";
 
 import { useUserInfoContext } from "@/contexts/userInfoContext";
 import Completed from "./components/Completed";
-import { useRouter } from "next/navigation";
 
 const PaymentPage = () => {
   const { info } = useUserInfoContext();
@@ -34,7 +33,7 @@ const PaymentPage = () => {
       feildName: "ADDRESS",
       status: false,
       progressBar: "w-[35%]",
-      component: <AddressForm progressbarBtn={submitDetailsHandler} />,
+      component: <AddressForm progressbarBtn={incrementProgressBarState} />,
       position: "left-[32%]",
     },
     {
@@ -56,27 +55,37 @@ const PaymentPage = () => {
     },
   ]);
 
-  function submitDetailsHandler() {
+  function incrementProgressBarState() {
     progress[progressBar].status = true;
     setProgressBar((prev) => prev + 1);
   }
 
+  function decrementProgressBarState() {
+    if (progressBar < 1) return;
+    progress[progressBar].status = false;
+    setProgressBar((prev) => prev - 1);
+  }
+
   useEffect(() => {
+    console.log(info);
     if (!info) {
+      progress.map((val) => {
+        val.status = false;
+      });
       setProgressBar(0);
-      progress[progressBar].status = false;
-      progress[0].status = false;
     }
+
     if (info?.userId && progressBar === 0) {
+      progress[progressBar].status = true;
       setProgressBar(1);
-      progress[progressBar].status = true;
     }
-    if (info?.address?.address && progressBar === 1) {
-      setProgressBar(2);
+
+    if (info?.address && progressBar === 1) {
       progress[progressBar].status = true;
+      setProgressBar((prev) => prev + 1);
     }
   }, [info, progressBar]);
-
+  
   return (
     <main className="h-full w-full flex justify-center">
       <div className="h-full w-[80%]">
@@ -108,7 +117,7 @@ const PaymentPage = () => {
               {progress[progressBar].btnName && (
                 <div className="h-10 w-full mt-6 flex justify-end">
                   <button
-                    onClick={submitDetailsHandler}
+                    onClick={incrementProgressBarState}
                     className=" px-6 py-2 bg-gray-950 font-semibold text-white dark:bg-white dark:text-gray-950 rounded-lg active:scale-95 transition-all"
                   >
                     {progress[progressBar].btnName}
@@ -117,7 +126,7 @@ const PaymentPage = () => {
               )}
             </main>
           </div>
-          <PriceDetails NoOfItems={2} discount={12323} totalAmount={65999} />
+          <PriceDetails NoOfItems={1} discount={23999} totalAmount={23999} />
         </div>
       </div>
     </main>

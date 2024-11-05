@@ -6,17 +6,12 @@ import { disconnectToDB } from "@/lib/disconnectToDB";
 import { sendMail } from "@/lib/mailer";
 import User from "@/models/User";
 
-type T = {
-  username: string;
-  email: string;
-  password: string;
-};
 
 export async function POST(request: NextRequest) {
-  try {
-    await connectToDB();
+  await connectToDB();
 
-    const { username, email, password }: T = await request.json();
+  try {
+    const { username, email, password }= await request.json();
 
     const hashedPass = await bcrypt.hash(password, 10);
 
@@ -33,6 +28,7 @@ export async function POST(request: NextRequest) {
       username,
       email,
       password: hashedPass,
+      address: null,
     });
 
     // send Verification Email
@@ -55,7 +51,7 @@ export async function POST(request: NextRequest) {
         errmessage: error.message,
       },
       {
-        status: 500,
+        status: 400,
       }
     );
   } finally {

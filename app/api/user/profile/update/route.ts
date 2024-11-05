@@ -6,14 +6,38 @@ import { getDataFromToken } from "@/lib/getDataFromToken";
 
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(request: NextRequest) {
+export async function PUT(request: NextRequest) {
   try {
     await connectToDB();
 
     const userId = await getDataFromToken(request);
 
+    if (!userId)
+      return NextResponse.json(
+        {
+          message: "Signin to continue",
+          success: false,
+        },
+        {
+          status: 400,
+        }
+      );
+
     const { name, phoneNumber, pincode, locality, address } =
       await request.json();
+
+    if (!name || !phoneNumber || !pincode || !locality || !address)
+      return NextResponse.json(
+        {
+          message: "All feilds are required!",
+          success: false,
+        },
+        {
+          status: 400,
+        }
+      );
+
+    console.log("ID ", userId);
 
     const user = await User.findByIdAndUpdate(userId, {
       $set: {
@@ -38,10 +62,15 @@ export async function POST(request: NextRequest) {
       }
     );
   } catch (error: any) {
-    return NextResponse.json({
-      message: error.message,
-      success: false,
-    });
+    return NextResponse.json(
+      {
+        message: error.message,
+        success: false,
+      },
+      {
+        status: 400,
+      }
+    );
   } finally {
     disconnectToDB();
   }

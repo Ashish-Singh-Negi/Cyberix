@@ -1,6 +1,5 @@
 "use client";
 
-import { CartItemProps } from "@/lib/definations";
 import {
   Dispatch,
   ReactNode,
@@ -24,6 +23,10 @@ export default function CartContextProvider({
   children: ReactNode;
 }) {
   const [cartItems, setCartItems] = useState<CartItemProps[] | []>([]);
+
+  useEffect(() => {
+    console.log(cartItems);
+  }, [cartItems]);
 
   return (
     <CartContext.Provider

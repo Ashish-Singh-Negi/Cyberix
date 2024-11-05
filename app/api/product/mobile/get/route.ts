@@ -8,8 +8,11 @@ export async function POST(request: NextRequest) {
     await connectToDB();
 
     const { productID } = await request.json();
+
+    console.log(productID);
+
     const result = await Mobile.findById(productID);
-    console.log(result);
+    console.log("Server : ", result);
 
     return NextResponse.json(
       {
@@ -22,10 +25,15 @@ export async function POST(request: NextRequest) {
       }
     );
   } catch (error) {
-    return NextResponse.json({
-      success: false,
-      message: "Not Found",
-    });
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Not Found",
+      },
+      {
+        status: 404,
+      }
+    );
   } finally {
     await disconnectToDB();
   }

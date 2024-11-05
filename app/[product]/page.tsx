@@ -2,35 +2,60 @@
 
 import React, { useEffect, useState } from "react";
 
-import ProductCard from "../components/ProductCard";
-import { LaptopProps, MobileProps } from "@/lib/definations";
 import axios from "axios";
-import Loader from "../components/Loader";
 
-const ProductsPage = ({ params }: { params: { product: string } }) => {
+import ProductCard from "../components/ProductCard";
+import Loader from "../components/Loader";
+import { useParams } from "next/navigation";
+
+const ProductsPage = () => {
+  const { product } = useParams();
+
+  // const [categoryParams, setCategoryParams] = useState<string | null>(null);
+
   const [products, setProducts] = useState<Array<
     MobileProps | LaptopProps
   > | null>([]);
 
   const [loading, setLoading] = useState(true);
 
+  // useEffect(() => {
+  //   (async () => {
+  //     const result = await product;
+  //     console.log(result);
+  //     setCategoryParams(result.product.toLowerCase());
+  //   })();
+  // }, [params]);
+
   useEffect(() => {
-    setTimeout(() => {
-      (async () => {
-        try {
-          setLoading(true);
-          const { data } = await axios.get(
-            `/api/product/${params.product.toLowerCase()}/getAll`
-          );
-          setProducts(data.data);
-        } catch (error: any) {
-          console.error(error.message);
-        } finally {
-          setLoading(false);
+    // const id = setTimeout(() => {
+    const getProducts = async (url: string, retries: number) => {
+      try {
+        setLoading(true);
+
+        const { data } = await axios.get(url);
+
+        console.log(data);
+
+        setProducts(data.data);
+
+        setLoading(false);
+      } catch (error) {
+        if (retries > 0) {
+          console.warn(`Retrying... (${retries} attempts left)`);
+          return getProducts(`/api/product/${product}/getAll`, retries - 1);
         }
-      })();
-    }, 2000);
-  }, [params.product]);
+        console.error(error);
+      }
+    };
+    // console.log(`/api/product/${product}/getAll`);
+    getProducts(`/api/product/${product}/getAll`, 3);
+    // }, 1000);
+
+    // return () => {
+    //   clearTimeout(id);
+    // };
+  }, []);
 
   return (
     <>

@@ -11,6 +11,7 @@ import UserInfoContextProvider from "@/contexts/userInfoContext";
 import CartContextProvider from "@/contexts/cartContext";
 import Header from "./components/Header";
 import Nav from "./components/Nav";
+import DailogBox from "./components/DialogBox";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -32,9 +33,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                   <Header />
                   <section className="flex bg-gray-50">
                     <Nav />
-                    <section className="h-dvh w-full pt-14 px-3 bg-gray-100 dark:bg-gray-900 overflow-y-scroll box-border">
+                    <main className="h-dvh w-full pt-14 px-3 bg-gray-100 dark:bg-gray-900 overflow-y-scroll box-border">
                       <HomePage>{children}</HomePage>
-                    </section>
+                    </main>
                   </section>
                 </CartContextProvider>
               </UserInfoContextProvider>
