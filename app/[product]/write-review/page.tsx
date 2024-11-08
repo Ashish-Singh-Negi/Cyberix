@@ -10,19 +10,28 @@ import toast from "react-hot-toast";
 
 import { TiStarFullOutline } from "react-icons/ti";
 import { TiStarOutline } from "react-icons/ti";
+import { useProductContext } from "@/contexts/productContext";
+import Loader from "@/app/components/Loader";
 
 const WriteReviewPage = () => {
-  const { product } = useParams();
-  const sparams = useSearchParams();
-
-  const { info } = useUserInfoContext();
-  const { back } = useRouter();
-
   const [stars, setStars] = useState(0);
   const [heading, setHeading] = useState("");
   const [review, setReview] = useState("");
+  const [img, setImg] = useState<string | null>(null);
 
-  const pid = sparams.get("pid");
+  const [loading, setLoading] = useState(true);
+
+  const { product } = useProductContext();
+  const { info } = useUserInfoContext();
+
+  const searchparams = useSearchParams();
+
+  const { back, push } = useRouter();
+
+  const pid = searchparams.get("pid");
+  const color = searchparams.get("color");
+  const memory = searchparams.get("memory");
+  const storage = searchparams.get("storage");
 
   const createReviewHandler = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -45,7 +54,15 @@ const WriteReviewPage = () => {
   };
 
   useEffect(() => {
-    if (!info) back();
+    if (!info || !product) return back();
+
+    product?.color.map((element) => {
+      if (color === element.color) {
+        setImg(element.imgURLs[0]);
+      }
+    });
+
+    setLoading(false);
   }, [info]);
 
   const updateRating = async () => {
@@ -58,25 +75,30 @@ const WriteReviewPage = () => {
         },
       });
 
-      const reviews: Reviews[] = data.data.reviews;
+      if (data.data) {
+        const reviews: Reviews[] = data.data.reviews;
 
-      console.log("Reviews : ", data);
+        console.log("Reviews : ", data);
 
-      reviews.map((value) => {
-        ratingIs += value.rating;
-      });
+        reviews.map((value) => {
+          ratingIs += value.rating;
+        });
 
-      ratingIs = ratingIs / reviews.length;
+        ratingIs = ratingIs / reviews.length;
+      }
     } catch (error: any) {
       console.log(error.message);
       throw error;
     }
 
     try {
-      const { data } = await axios.put(`/api/product/${product}/rate`, {
-        pid,
-        rating: Number(ratingIs.toFixed(1)),
-      });
+      const { data } = await axios.put(
+        `/api/product/${product?.category.toLowerCase()}/rate`,
+        {
+          pid,
+          rating: Number(ratingIs.toFixed(1)),
+        }
+      );
 
       console.log(data);
 
@@ -86,6 +108,8 @@ const WriteReviewPage = () => {
     }
   };
 
+  if (loading) return <Loader />;
+
   return (
     <div className="h-full w-full bg-white dark:bg-black px-6 pt-4 overflow-y-auto">
       <h1 className="text-3xl font-medium mb-5">Create Review</h1>
@@ -94,15 +118,11 @@ const WriteReviewPage = () => {
         className="h-fit w-full flex flex-col px-6"
       >
         <div className="h-20 w-full flex gap-6 items-center mb-4">
-          <img
-            className="h-20 w-20"
-            src={`http://localhost:3000/_next/image?url=https%3A%2F%2Ffirebasestorage.googleapis.com%2Fv0%2Fb%2Fcyberix-a4239.appspot.com%2Fo%2Fimages%252Fmobile%252Fapple%252Fiphone%252015%2520pro%2520max%252FWhite%2520Titanium%252F300815_0_vlccxo.webp%3Falt%3Dmedia%26token%3D4f0dc66f-9bc3-4b33-9ec9-517e4eb2f81f&w=640&q=75`}
-            alt="Product Image"
-          />
+          <img className="h-20 w-20" src={img!} alt="Product Image" />
           <span className="h-16 w-[1px] bg-black dark:bg-white"></span>
           <p className="font-medium text-lg">
-            Apple iphone 15 pro max ( Black Titanium , 256 GB Storage) ( 8 GB
-            RAM )
+            {product?.brandName} {product?.productName} ( {color} , {storage}{" "}
+            Storage) ( {memory} RAM )
           </p>
         </div>
         <div className="h-24 w-full border-y-[1px] py-3">

@@ -7,7 +7,7 @@ type ProductImagesProps = {
   color: string;
   img: string;
   defaultImgs: string[];
-  setImg: Dispatch<SetStateAction<string | null>>;
+  setImg: Dispatch<SetStateAction<string>>;
 };
 
 const ProductImages = ({

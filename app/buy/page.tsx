@@ -85,7 +85,7 @@ const PaymentPage = () => {
       setProgressBar((prev) => prev + 1);
     }
   }, [info, progressBar]);
-  
+
   return (
     <main className="h-full w-full flex justify-center">
       <div className="h-full w-[80%]">

@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       {
         status: true,
-        message: "Review Added Successfully",
+        message: "Review found",
         data: resData,
       },
       {

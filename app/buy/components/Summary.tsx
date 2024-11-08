@@ -3,11 +3,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-import CartItem from "@/app/cart/components/CartItem";
-
 import { useCartContext } from "@/contexts/cartContext";
 import { useUserInfoContext } from "@/contexts/userInfoContext";
 
+import CartItem from "@/app/cart/components/CartItem";
 import SmallLoader from "@/app/components/SmallLoader";
 
 const Summary = () => {
@@ -53,7 +52,7 @@ const Summary = () => {
           if (product.isBuying)
             return (
               <CartItem
-                key={product.productName}
+                key={`${product._id} ${product.color}`}
                 _id={product._id}
                 brandName={product.brandName}
                 category={product.category}

@@ -4,12 +4,20 @@ import Mobile from "@/models/Mobile";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PUT(request: NextRequest) {
+  await connectToDB();
   try {
-    console.log("Connecting to DB .....");
-    await connectToDB();
-    console.log("Connected to DB :::::");
-
     const { pid, rating } = await request.json();
+
+    if (!pid || !rating)
+      return NextResponse.json(
+        {
+          success: false,
+          message: `Few info is missing`,
+        },
+        {
+          status: 400,
+        }
+      );
 
     await Mobile.findByIdAndUpdate(pid, {
       $set: {
@@ -19,7 +27,7 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json({
       status: true,
-      message: "Rating Changed",
+      message: "Review Added Successfully",
     });
   } catch (error: any) {
     return NextResponse.json({
@@ -27,8 +35,6 @@ export async function PUT(request: NextRequest) {
       message: error.message,
     });
   } finally {
-    console.log("Disconnecting from the database...");
     await disconnectToDB();
-    console.log("Disconnected from the database.");
   }
 }

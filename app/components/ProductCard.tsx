@@ -28,11 +28,11 @@ const ProductCard = ({
         );
         break;
 
-      case "laptop":
-        setUrl(
-          `/laptop/details?category=${category}&name=${productName}&cpu=${varient.processor}&gpu=${varient.gpu}&color=${color}&storage=${varient.storage}&memory=${varient.memory}&pid=${pid}`
-        );
-        break;
+      // case "laptop":
+      //   setUrl(
+      //     `/laptop/details?category=${category}&name=${productName}&cpu=${varient.processor}&gpu=${varient.gpu}&color=${color}&storage=${varient.storage}&memory=${varient.memory}&pid=${pid}`
+      //   );
+      //   break;
 
       default:
         setUrl("/not-found");

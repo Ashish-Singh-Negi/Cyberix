@@ -77,6 +77,7 @@ type MobileProps = CommonProps & {
 };
 
 type MobileVarient = {
+  _id: string;
   memory: string;
   storage: string;
   mrp: string;
@@ -104,6 +105,7 @@ type LaptopProps = CommonProps & {
 };
 
 type LaptopVarient = {
+  _id: string;
   memory: string;
   storage: string;
   processor: string;

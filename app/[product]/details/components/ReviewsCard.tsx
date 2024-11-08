@@ -9,7 +9,6 @@ import toast from "react-hot-toast";
 import { MdStar, MdThumbDown, MdThumbUp } from "react-icons/md";
 import { RiEdit2Fill } from "react-icons/ri";
 
-import { useUserInfoContext } from "@/contexts/userInfoContext";
 import Review from "./Review";
 
 const oneSecondInMs = 1000;
@@ -89,7 +88,7 @@ const ReviewsCard = ({
         dislikes,
       });
 
-      toast.success(data.message); // Remove this Toast Before Build
+      console.log(data.message); // Remove this Toast Before Build
     } catch (error: any) {
       console.log(error.message);
     }

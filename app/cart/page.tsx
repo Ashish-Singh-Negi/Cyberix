@@ -1,19 +1,16 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
-
-import { useUserInfoContext } from "@/contexts/userInfoContext";
-
-import CartItem from "./components/CartItem";
-import Loader from "../components/Loader";
-
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useCartContext } from "@/contexts/cartContext";
+
 import { FaOpencart } from "react-icons/fa6";
 
+import { useUserInfoContext } from "@/contexts/userInfoContext";
+import { useCartContext } from "@/contexts/cartContext";
+
+import CartItem from "./components/CartItem";
 import Price from "./components/PriceDetails";
-import { useSigninContext } from "@/contexts/signinContext";
-import DialogBox from "../components/DialogBox";
+import Loader from "../components/Loader";
 
 const CartPage = () => {
   const { info } = useUserInfoContext();
@@ -76,8 +73,8 @@ const CartPage = () => {
           <h1 className="text-gray-900 dark:text-gray-50 font-semibold text-3xl">
             <button>Shopping Cart</button>
           </h1>
-          <div className="h-[800px] w-full flex">
-            <main className="h-full w-[1200px] box-border mt-6 px-4 overflow-y-auto rounded-lg">
+          <div className="h-[85vh] w-full flex">
+            <main className="h-full w-[80%] box-border mt-6 overflow-y-auto rounded-lg">
               {itemsInCart.map((product) => (
                 <CartItem
                   _id={product._id}
@@ -89,7 +86,7 @@ const CartPage = () => {
                   pid={product.pid}
                   img={product.img}
                   quantity={product.quantity}
-                  key={product.productName}
+                  key={`${product._id} ${product.color}`}
                 />
               ))}
             </main>

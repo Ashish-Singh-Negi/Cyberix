@@ -21,28 +21,32 @@ const Header = () => {
   const { signin, setSignin } = useSigninContext();
   const { setItemsInCart } = useCartContext();
 
-  const getProfile = async () => {
-    const { data } = await axios.get("/api/user/profile");
-
-    console.log(data);
-
-    if (!data.success) {
-      return;
-    }
-
-    console.log(data);
-    setSignin(true);
-    setInfo({
-      userId: data.data._id,
-      username: data.data.username,
-      email: data.data.email,
-      address: data.data.address,
-    });
-    
-    setItemsInCart(data.data.itemsInCart);
-  };
-
   useEffect(() => {
+    const getProfile = async () => {
+      try {
+        const { data } = await axios.get("/api/user/profile");
+
+        console.log(data);
+
+        if (!data.success) {
+          return;
+        }
+
+        console.log(data);
+        setSignin(true);
+        setInfo({
+          userId: data.data._id,
+          username: data.data.username,
+          email: data.data.email,
+          address: data.data.address,
+        });
+
+        setItemsInCart(data.data.itemsInCart);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
     getProfile();
   }, [signin]);
 

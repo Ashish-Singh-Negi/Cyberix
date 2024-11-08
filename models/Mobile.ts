@@ -26,19 +26,24 @@ const ReviewSchema = new Schema(
       type: [String],
       require: true,
     },
-    // likedBy: {
-    //   type: [String],
-    //   require: true,
-    // },
-    // dislikedBy: {
-    //   type: [String],
-    //   require: true,
-    // },
   },
   {
     timestamps: true,
   }
 );
+
+const VarientSchema = new Schema({
+  memory: String,
+  storage: String,
+  mrp: String,
+  salePrice: String,
+  inStock: [
+    {
+      color: String,
+      stock: Number,
+    },
+  ],
+});
 
 const MobileSchema = new Schema(
   {
@@ -75,7 +80,7 @@ const MobileSchema = new Schema(
       require: true,
     },
     varients: {
-      type: Array,
+      type: [VarientSchema],
       require: true,
     },
     highlights: {

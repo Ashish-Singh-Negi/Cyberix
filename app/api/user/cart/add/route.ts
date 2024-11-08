@@ -1,4 +1,5 @@
 import { connectToDB } from "@/lib/connectToDB";
+import { disconnectToDB } from "@/lib/disconnectToDB";
 import User from "@/models/User";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -9,39 +10,49 @@ export async function POST(request: NextRequest) {
     const { uid, pid, brandName, productName, color, varient, img, isBuying } =
       await request.json();
 
+    // Search for user
     const user = await User.findOne({ _id: uid }).exec();
 
-    const duplicateItem = user.itemsInCart.filter(
-      (product: CartItemProps) => product.pid === pid && product.color === color
+    // check if already added
+    const isExist = user.itemsInCart.filter(
+      (product: CartItemProps) =>
+        product.pid === pid &&
+        product.color === color &&
+        product.varient._id === varient._id
     );
 
-    if (duplicateItem.length) {
+    user.itemsInCart.forEach((product: CartItemProps) => {
+      if (
+        product.pid !== pid ||
+        product.color !== color ||
+        product.varient._id !== varient._id
+      ) {
+        product.isBuying = false;
+      }
+    });
 
-      duplicateItem[0].isBuying = isBuying;
+    if (isExist.length) {
+      isExist[0].isBuying = isBuying;
       await user.save();
-    }
 
-    if (duplicateItem.length) {
       return NextResponse.json({
-        success: true, //
+        success: true,
         message: `${productName} already exist in Cart`,
       });
     }
 
-    await User.findByIdAndUpdate(uid, {
-      $push: {
-        itemsInCart: {
-          pid,
-          color,
-          brandName,
-          productName,
-          varient,
-          quantity: 1,
-          img,
-          isBuying,
-        },
-      },
+    await user.itemsInCart.push({
+      pid,
+      color,
+      brandName,
+      productName,
+      varient,
+      quantity: 1,
+      img,
+      isBuying,
     });
+
+    await user.save();
 
     return NextResponse.json(
       {
@@ -62,5 +73,7 @@ export async function POST(request: NextRequest) {
         status: 400,
       }
     );
+  } finally {
+    await disconnectToDB();
   }
 }

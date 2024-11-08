@@ -181,7 +181,7 @@ const AddToCartBtn = ({
     }
 
     itemsInCart &&
-      itemsInCart.map((prod: CartItemProps) => {
+      itemsInCart.forEach((prod: CartItemProps) => {
         if (
           pid === prod.pid &&
           color === prod.color &&
@@ -197,7 +197,7 @@ const AddToCartBtn = ({
     <>
       {isExist ? (
         <Link href={`/cart`}>
-          <button className="h-14 w-[204px] rounded-lg border-2 border-gray-800 transition-all active:scale-95 hover:bg-gray-600 dark:hover:bg-gray-300 dark:hover:text-gray-900 hover:text-white dark:border-gray-100">
+          <button className="h-14 w-[204px] rounded-lg border-2 border-gray-800 transition-all active:scale-95 hover:bg-gray-500 dark:hover:bg-gray-300 dark:hover:text-gray-900 hover:text-white dark:border-gray-100">
             Go to Cart
           </button>
         </Link>
@@ -208,7 +208,7 @@ const AddToCartBtn = ({
       ) : (
         <button
           onClick={() => addProductIncartHandler()}
-          className="h-14 w-52 rounded-lg border-2 flex justify-center items-center border-gray-800 transition-all active:scale-95 hover:bg-gray-600 dark:hover:bg-gray-300 dark:hover:text-gray-900 hover:text-white dark:border-gray-100"
+          className="h-14 w-52 rounded-lg border-2 flex justify-center items-center border-gray-800 transition-all active:scale-95 hover:bg-gray-500 dark:hover:bg-gray-300 dark:hover:text-gray-900 hover:text-white dark:border-gray-100"
         >
           {loading && <SmallLoader size="h-4 w-4" />} Add to Cart
         </button>

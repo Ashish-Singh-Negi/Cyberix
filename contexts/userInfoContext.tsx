@@ -26,7 +26,7 @@ type UserInfo = {
 };
 
 type UserInfoContext = {
-  info: UserInfo | null; 
+  info: UserInfo | null;
   setInfo: Dispatch<SetStateAction<UserInfo | null>>;
 };
 
@@ -58,11 +58,10 @@ export default function UserInfoContextProvider({
 export function useUserInfoContext() {
   const context = useContext(UserInfoContext);
 
-  if (!context) {
+  if (!context)
     throw new Error(
       "useUserInfoContext must be used within a UserInfoContextProvider"
     );
-  }
 
   return context;
 }

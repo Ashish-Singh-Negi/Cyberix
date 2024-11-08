@@ -8,7 +8,7 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json({
       status: true,
-      message: "Review Updated Successfully",
+      message: "Review Updated",
     });
   } catch (error: any) {
     return NextResponse.json({

@@ -4,14 +4,13 @@ import React, { useEffect, useState } from "react";
 
 import axios from "axios";
 
+import { useParams } from "next/navigation";
+
 import ProductCard from "../components/ProductCard";
 import Loader from "../components/Loader";
-import { useParams } from "next/navigation";
 
 const ProductsPage = () => {
   const { product } = useParams();
-
-  // const [categoryParams, setCategoryParams] = useState<string | null>(null);
 
   const [products, setProducts] = useState<Array<
     MobileProps | LaptopProps
@@ -19,16 +18,7 @@ const ProductsPage = () => {
 
   const [loading, setLoading] = useState(true);
 
-  // useEffect(() => {
-  //   (async () => {
-  //     const result = await product;
-  //     console.log(result);
-  //     setCategoryParams(result.product.toLowerCase());
-  //   })();
-  // }, [params]);
-
   useEffect(() => {
-    // const id = setTimeout(() => {
     const getProducts = async (url: string, retries: number) => {
       try {
         setLoading(true);
@@ -48,13 +38,8 @@ const ProductsPage = () => {
         console.error(error);
       }
     };
-    // console.log(`/api/product/${product}/getAll`);
-    getProducts(`/api/product/${product}/getAll`, 3);
-    // }, 1000);
 
-    // return () => {
-    //   clearTimeout(id);
-    // };
+    getProducts(`/api/product/${product}/getAll`, 3);
   }, []);
 
   return (

@@ -17,6 +17,7 @@ import AddToCartBtn, { BuyNowBtn } from "@/app/components/Btns";
 import Loader from "@/app/components/Loader";
 
 import { useUserInfoContext } from "@/contexts/userInfoContext";
+import { useProductContext } from "@/contexts/productContext";
 
 const MobileDetails = () => {
   const searchParams = useSearchParams();
@@ -30,10 +31,12 @@ const MobileDetails = () => {
   const memory = searchParams.get("memory");
   const searchParamsColor = searchParams.get("color");
 
+  const { setProduct } = useProductContext();
+
   const [mobileDetails, setMobileDetails] = useState<MobileProps | null>(null);
 
   const [color, setColor] = useState<string>(searchParams.get("color")!);
-  const [img, setImg] = useState<string | null>(null);
+  const [img, setImg] = useState<string>("");
 
   const [inStock, setInStock] = useState<number | null>(null);
 
@@ -54,7 +57,7 @@ const MobileDetails = () => {
 
         console.log(data);
         setMobileDetails(data.data);
-
+        setProduct(data.data);
         setLoading(false);
       } catch (error) {
         if (retries > 0) {
@@ -67,7 +70,7 @@ const MobileDetails = () => {
     }
 
     const id = setTimeout(() => {
-      getMobileDetails(`/api/product/${category}/get`, pid!, 3);
+      getMobileDetails(`/api/product/${category}/get`, pid!, 5);
     }, 1000);
     return () => clearTimeout(id);
   }, []);
@@ -85,24 +88,6 @@ const MobileDetails = () => {
   }, [color, mobileDetails]);
 
   useEffect(() => {
-    // let temp = 0;
-    // mobileDetails?.varients.map((value) => {
-    //   if (memory === value.memory && storage === value.storage) {
-    //     setVarient(value);
-    //     value.inStock.map((inStock) => {
-    //       if (color === inStock.color) {
-    //         setInStock(inStock.stock);
-    //       }
-    //     });
-    //   } else {
-    //     temp++;
-    //   }
-
-    //   if (temp === mobileDetails.varients.length) {
-    //     setVarient(null);
-    //     setInStock(null);
-    //   }
-    // });
     if (mobileDetails) {
       let foundVarient = null;
       for (const value of mobileDetails.varients) {
@@ -130,9 +115,9 @@ const MobileDetails = () => {
         <Loader />
       ) : (
         <main
-          className={`h-full w-full box-border flex pt-6 pb-4 gap-10 overflow-y-auto`}
+          className={`h-full w-full box-border lg:flex lg:flex-row pt-6 pb-4 gap-10 overflow-y-auto`}
         >
-          <div className="sticky top-0 h-[500px] w-[600px] flex">
+          <div className="lg:sticky top-0 lg:h-[500px] lg:w-[600px] flex">
             <div className={`h-[500px] w-[86px] mr-1 ml-8 overflow-y-auto`}>
               {mobileDetails && (
                 <ProductImages
@@ -305,7 +290,7 @@ const MobileDetails = () => {
                 <Link
                   href={`${
                     info
-                      ? `/${category}/write-review?pid=${mobileDetails?._id}`
+                      ? `/${category}/write-review?name=${mobileDetails?.productName}&color=${color}&storage=${varient?.storage}&memory=${varient?.memory}&color=${color}&pid=${pid}`
                       : `/signin`
                   }`}
                   className="px-4 py-1 text-lg bg-gray-950 text-white dark:bg-white dark:text-gray-950 rounded-md active:scale-95 transition-all"
@@ -332,8 +317,6 @@ const MobileDetails = () => {
                 review={review.review}
                 likes={review.likes}
                 dislikes={review.dislikes}
-                // likedBy={review.likedBy}
-                // dislikedBy={review.dislikedBy}
                 createdAt={review.createdAt}
               />
             ))}

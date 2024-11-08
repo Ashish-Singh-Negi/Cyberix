@@ -7,10 +7,6 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { MdStar } from "react-icons/md";
-// import { MdOutlineEdit } from "react-icons/md";
-// import { MdOutlineKeyboardArrowDown } from "react-icons/md";
-
-import { LaptopProps } from "@/lib/definations";
 
 import ReviewsCard from "./ReviewsCard";
 import Rating from "./Rating";
@@ -321,8 +317,8 @@ const LaptopDetails = () => {
               </p>
               <Rating
                 rating={laptopDetails?.rating!}
+                totalReviews={laptopDetails?.reviews!.length!}
                 reviews={laptopDetails?.reviews!}
-                noOfReviews={laptopDetails?.reviews.length!}
               />
             </div>
             {laptopDetails?.reviews.map((review) => (
@@ -338,8 +334,6 @@ const LaptopDetails = () => {
                 review={review.review}
                 likes={review.likes}
                 dislikes={review.dislikes}
-                // likedBy={review.likedBy}
-                // dislikedBy={review.dislikedBy}
                 createdAt={review.createdAt}
               />
             ))}
