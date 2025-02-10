@@ -1,18 +1,18 @@
 import Link from "next/link";
 import React from "react";
 
-type PriceProps = {
-  NoOfItems: number;
+type PriceDetails = {
+  noOfItems: number;
   totalAmount: number;
   discount: number;
 };
 
-const PriceDetails = ({ NoOfItems, totalAmount, discount }: PriceProps) => {
+const PriceDetails = ({ noOfItems, totalAmount, discount }: PriceDetails) => {
   return (
     <div className="h-fit w-[420px] px-4 py-2 bg-white dark:bg-gray-950">
       <h1 className="text-xl font-medium">PRICE DETAILS</h1>
       <p className="text-base mt-6 flex justify-between ">
-        Price ({NoOfItems} item) <span>₹{totalAmount}</span>
+        Price ({noOfItems} item) <span>₹{totalAmount}</span>
       </p>
       <p className="text-base mt-4 flex justify-between">
         Discount

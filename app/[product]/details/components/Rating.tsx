@@ -124,11 +124,11 @@ const Rating = ({
           </p>
         </div>
       </div>
-      <div className="h-full w-[500px] flex flex-col justify-center gap-[2px] pl-5">
+      <div className="h-full md:w-[500px] w-full flex flex-col justify-center gap-[2px] pl-5">
         <div className="h-6 w-full flex items-center">
           <p className="w-[10px] text-base mr-1">5</p>
           <TiStarFullOutline size={14} />
-          <div className=" h-2 w-[400px] bg-gray-200 ml-4 rounded-lg">
+          <div className=" h-2 md:w-[400px] w-full bg-gray-200 ml-4 rounded-lg">
             <p
               style={{ width: bars.fifth }}
               className={`h-2 bg-blue-500 rounded-lg transition-all`}
@@ -139,7 +139,7 @@ const Rating = ({
         <div className="h-6 w-full flex items-center">
           <p className="w-[10px] text-base mr-1">4</p>
           <TiStarFullOutline size={14} />
-          <div className="h-2 w-[400px] bg-gray-200 ml-4 rounded-lg">
+          <div className="h-2 md:w-[400px] w-full bg-gray-200 ml-4 rounded-lg">
             <p
               style={{ width: bars.fourth }}
               className={`h-2 bg-blue-500 rounded-lg transition-all`}
@@ -150,7 +150,7 @@ const Rating = ({
         <div className="h-6 w-full flex items-center">
           <p className="w-[10px] text-base mr-1">3</p>
           <TiStarFullOutline size={14} />
-          <div className="h-2 w-[400px] bg-gray-200 ml-4 rounded-lg">
+          <div className="h-2 md:w-[400px] w-full bg-gray-200 ml-4 rounded-lg">
             <p
               style={{ width: bars.third }}
               className={`h-2 bg-blue-500 rounded-lg transition-all `}
@@ -161,7 +161,7 @@ const Rating = ({
         <div className="h-6 w-full flex items-center">
           <p className="w-[10px] text-base mr-1">2</p>
           <TiStarFullOutline size={14} />
-          <div className="h-2 w-[400px] bg-gray-200 ml-4 rounded-lg">
+          <div className="h-2 md:w-[400px] w-full bg-gray-200 ml-4 rounded-lg">
             <p
               style={{ width: bars.second }}
               className={`h-2 bg-yellow-500 rounded-lg transition-all`}
@@ -172,7 +172,7 @@ const Rating = ({
         <div className="h-6 w-full flex items-center">
           <p className="w-[10px] text-base mr-1">1</p>
           <TiStarFullOutline size={14} />
-          <div className="h-2 w-[400px] bg-gray-200 ml-4 rounded-lg">
+          <div className="h-2 md:w-[400px] w-full bg-gray-200 ml-4 rounded-lg">
             <p
               style={{ width: bars.first }}
               className={`h-2 bg-red-600 rounded-lg transition-all`}

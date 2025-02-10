@@ -197,18 +197,18 @@ const AddToCartBtn = ({
     <>
       {isExist ? (
         <Link href={`/cart`}>
-          <button className="h-14 w-[204px] rounded-lg border-2 border-gray-800 transition-all active:scale-95 hover:bg-gray-500 dark:hover:bg-gray-300 dark:hover:text-gray-900 hover:text-white dark:border-gray-100">
+          <button className="sm:h-14 h-10 w-[204px] rounded-lg border-2 border-gray-800 transition-all active:scale-95 hover:bg-gray-500 dark:hover:bg-gray-300 dark:hover:text-gray-900 hover:text-white dark:border-gray-100">
             Go to Cart
           </button>
         </Link>
       ) : varient === null ? (
-        <button className="h-14 w-52 cursor-not-allowed rounded-lg border-2 border-gray-800 transition-all active:scale-95 dark:border-gray-100">
+        <button className="sm:h-14 h-10 sm:w-52 w-48 cursor-not-allowed rounded-lg border-2 border-gray-800 transition-all active:scale-95 dark:border-gray-100">
           Add to Cart
         </button>
       ) : (
         <button
           onClick={() => addProductIncartHandler()}
-          className="h-14 w-52 rounded-lg border-2 flex justify-center items-center border-gray-800 transition-all active:scale-95 hover:bg-gray-500 dark:hover:bg-gray-300 dark:hover:text-gray-900 hover:text-white dark:border-gray-100"
+          className="sm:h-14 h-10 sm:w-52 w-48 rounded-lg border-2 flex justify-center items-center border-gray-800 transition-all active:scale-95 hover:bg-gray-500 dark:hover:bg-gray-300 dark:hover:text-gray-900 hover:text-white dark:border-gray-100"
         >
           {loading && <SmallLoader size="h-4 w-4" />} Add to Cart
         </button>
@@ -281,13 +281,13 @@ export const BuyNowBtn = ({
   };
 
   return varient === null ? (
-    <button className="h-14 w-52 cursor-not-allowed rounded-lg flex justify-center items-center bg-gray-800 text-white transition-all active:scale-95 hover:bg-gray-900 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-200">
+    <button className="sm:h-14 h-10 w-52 cursor-not-allowed rounded-lg flex justify-center items-center bg-gray-800 text-white transition-all active:scale-95 hover:bg-gray-900 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-200">
       Buy Now
     </button>
   ) : (
     <button
       onClick={addProductIncartHandler}
-      className="h-14 w-52 rounded-lg flex justify-center items-center bg-gray-800 text-white transition-all active:scale-95 hover:bg-gray-900 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-200"
+      className="sm:h-14 h-10 w-52 rounded-lg flex justify-center items-center bg-gray-800 text-white transition-all active:scale-95 hover:bg-gray-900 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-200"
     >
       {loading && <SmallLoader size="h-4 w-4" />} Buy Now
     </button>

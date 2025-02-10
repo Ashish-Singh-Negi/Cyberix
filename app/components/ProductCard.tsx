@@ -43,7 +43,7 @@ const ProductCard = ({
   return (
     <Link
       href={url}
-      className="h-fit w-[98%] bg-white dark:bg-gray-950 border-[1px] dark:border-none rounded-xl flex gap-4 p-6 box-border cursor-pointer transition-all duration-300 active:scale-95 hover:shadow-md"
+      className="h-fit w-[98%] bg-white dark:bg-gray-950 border-[1px] dark:border-none rounded-xl flex gap-4 md:p-6 p-4 box-border cursor-pointer transition-all duration-300 active:scale-95 hover:shadow-md"
     >
       <div className="h-40 w-48 md:h-64 md:w-72 flex justify-center items-center transition-all ">
         <Image
@@ -56,7 +56,7 @@ const ProductCard = ({
       </div>
 
       <div className="h-full w-3/4">
-        <p className="font-semibold group-hover:text-blue-500 transition-colors">
+        <p className="md:font-semibold font-medium text-base group-hover:text-blue-500 transition-colors">
           {brandName} {productName} ({color} , {varient.storage}){" "}
           {varient.memory}
         </p>

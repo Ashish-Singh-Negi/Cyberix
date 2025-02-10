@@ -1,16 +1,15 @@
 "use client";
 
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import React, { FormEvent, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 import { useUserInfoContext } from "@/contexts/userInfoContext";
-
-import axios from "axios";
-import React, { FormEvent, useEffect, useState } from "react";
-import toast from "react-hot-toast";
+import { useProductContext } from "@/contexts/productContext";
 
 import { TiStarFullOutline } from "react-icons/ti";
 import { TiStarOutline } from "react-icons/ti";
-import { useProductContext } from "@/contexts/productContext";
 import Loader from "@/app/components/Loader";
 
 const WriteReviewPage = () => {
@@ -26,12 +25,24 @@ const WriteReviewPage = () => {
 
   const searchparams = useSearchParams();
 
-  const { back, push } = useRouter();
+  const { back } = useRouter();
 
   const pid = searchparams.get("pid");
   const color = searchparams.get("color");
   const memory = searchparams.get("memory");
   const storage = searchparams.get("storage");
+
+  useEffect(() => {
+    if (!info || !product) return back();
+
+    product?.color.map((element) => {
+      if (color === element.color) {
+        setImg(element.imgURLs[0]);
+      }
+    });
+
+    setLoading(false);
+  }, [info]);
 
   const createReviewHandler = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -52,18 +63,6 @@ const WriteReviewPage = () => {
 
     updateRating();
   };
-
-  useEffect(() => {
-    if (!info || !product) return back();
-
-    product?.color.map((element) => {
-      if (color === element.color) {
-        setImg(element.imgURLs[0]);
-      }
-    });
-
-    setLoading(false);
-  }, [info]);
 
   const updateRating = async () => {
     let ratingIs = 0;

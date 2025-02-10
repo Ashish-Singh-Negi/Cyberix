@@ -47,7 +47,7 @@ const ProductsPage = () => {
       {loading ? (
         <Loader />
       ) : (
-        <main className="h-full w-full py-2 flex flex-col items-center 2xl:grid grid-cols-2 justify-items-center gap-y-4 overflow-y-auto dark:bg-gray-900">
+        <main className="h-full w-full py-2 flex flex-col items-center 2xl:grid grid-cols-2 justify-items-center gap-y-1 overflow-y-auto dark:bg-gray-900">
           {products &&
             products.map((item) => (
               <ProductCard

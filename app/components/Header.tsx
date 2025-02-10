@@ -63,7 +63,7 @@ const Header = () => {
   }, [pathname]);
 
   return (
-    <header className="h-14 w-full z-10 flex justify-between px-3 items-center border-b-2 fixed bg-white dark:bg-gray-900 dark:shadow-gray-700">
+    <header className="h-14 w-full z-10 flex justify-between lg:px-3 px-1 items-center border-b-2 fixed bg-white dark:bg-gray-900 dark:shadow-gray-700">
       <Toaster />
       <div className="h-full flex items-center">
         <button

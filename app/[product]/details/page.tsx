@@ -14,7 +14,7 @@ const DetailsPage = () => {
 
   return (
     <div
-      className={`h-full w-full bg-white dark:bg-gray-950 rounded-lg px-4 py-2 flex flex-col items-center overflow-y-auto`}
+      className={`h-full w-full bg-white dark:bg-gray-950 rounded-lg lg:px-4 py-2 flex flex-col items-center overflow-y-auto`}
     >
       {category === "mobile" && <MobileDetails />}
       {category === "laptop" && <LaptopDetails />}

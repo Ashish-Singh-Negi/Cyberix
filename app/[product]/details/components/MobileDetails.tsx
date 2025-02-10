@@ -23,6 +23,7 @@ const MobileDetails = () => {
   const searchParams = useSearchParams();
 
   const { info } = useUserInfoContext();
+  const { setProduct } = useProductContext();
 
   const category = searchParams.get("category");
   const name = searchParams.get("name");
@@ -31,7 +32,7 @@ const MobileDetails = () => {
   const memory = searchParams.get("memory");
   const searchParamsColor = searchParams.get("color");
 
-  const { setProduct } = useProductContext();
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const [mobileDetails, setMobileDetails] = useState<MobileProps | null>(null);
 
@@ -45,30 +46,30 @@ const MobileDetails = () => {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function getMobileDetails(url: string, pid: string, retries: number) {
-      try {
-        setLoading(true);
-        setError(false);
+  async function getMobileDetails(url: string, pid: string, retries: number) {
+    try {
+      setLoading(true);
+      setError(false);
 
-        const { data } = await axios.post(url, {
-          productID: pid,
-        });
+      const { data } = await axios.post(url, {
+        productID: pid,
+      });
 
-        console.log(data);
-        setMobileDetails(data.data);
-        setProduct(data.data);
-        setLoading(false);
-      } catch (error) {
-        if (retries > 0) {
-          console.warn(`Retrying... (${retries} attempts left)`);
-          return getMobileDetails(url, pid, retries - 1);
-        }
-        console.error(error);
-        setError(true);
+      console.log(data);
+      setMobileDetails(data.data);
+      setProduct(data.data);
+      setLoading(false);
+    } catch (error) {
+      if (retries > 0) {
+        console.warn(`Retrying... (${retries} attempts left)`);
+        return getMobileDetails(url, pid, retries - 1);
       }
+      console.error(error);
+      setError(true);
     }
+  }
 
+  useEffect(() => {
     const id = setTimeout(() => {
       getMobileDetails(`/api/product/${category}/get`, pid!, 5);
     }, 1000);
@@ -88,26 +89,85 @@ const MobileDetails = () => {
   }, [color, mobileDetails]);
 
   useEffect(() => {
-    if (mobileDetails) {
-      let foundVarient = null;
-      for (const value of mobileDetails.varients) {
-        if (memory === value.memory && storage === value.storage) {
-          foundVarient = value;
-          const stockInfo = value.inStock.find(
-            (inStock) => inStock.color === color
-          );
-          setInStock(stockInfo ? stockInfo.stock : null);
-          break;
-        }
-      }
-      if (!foundVarient) {
-        setVarient(null);
-        setInStock(null);
-      } else {
-        setVarient(foundVarient);
+    const handleResize = () => setWindowWidth(window.innerWidth);
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!mobileDetails) return;
+
+    let foundVarient = null;
+    for (const value of mobileDetails.varients) {
+      if (memory === value.memory && storage === value.storage) {
+        foundVarient = value;
+        const stockInfo = value.inStock.find(
+          (inStock) => inStock.color === color
+        );
+        setInStock(stockInfo ? stockInfo.stock : null);
+        break;
       }
     }
+    if (!foundVarient) {
+      setVarient(null);
+      setInStock(null);
+    } else {
+      setVarient(foundVarient);
+    }
   }, [color, memory, storage, mobileDetails]);
+
+  const smallViewport = (
+    <div className="top-0 h-[420px] w-full flex">
+      <div className="h-[420px] w-[460px] flex flex-col">
+        {img && (
+          <Image
+            className="h-[320px] w-[320px] border-gray-300 mx-auto"
+            src={img}
+            alt="Image"
+            height={416}
+            width={416}
+          />
+        )}
+        <div
+          className={`h-[86px] mr-1 overflow-x-auto flex flex-col flex-wrap`}
+        >
+          {mobileDetails && (
+            <ProductImages
+              colorsImgs={mobileDetails.color}
+              defaultImgs={mobileDetails.defaultImgs!}
+              color={color}
+              img={img!}
+              setImg={setImg}
+            />
+          )}
+        </div>
+        <div className="absolute bg-white dark:bg-gray-950 bottom-0 h-12 text-lg font-semibold flex items-center gap-3">
+          <AddToCartBtn
+            pid={pid!}
+            brandName={mobileDetails?.brandName!}
+            productName={mobileDetails?.productName!}
+            color={color}
+            varient={varient!}
+            imgs={mobileDetails?.color!}
+            isBuying={false}
+          />
+          <BuyNowBtn
+            pid={pid!}
+            brandName={mobileDetails?.brandName!}
+            productName={mobileDetails?.productName!}
+            color={color}
+            varient={varient!}
+            imgs={mobileDetails?.color!}
+            isBuying={true}
+          />
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <>
@@ -117,50 +177,54 @@ const MobileDetails = () => {
         <main
           className={`h-full w-full box-border lg:flex lg:flex-row pt-6 pb-4 gap-10 overflow-y-auto`}
         >
-          <div className="lg:sticky top-0 lg:h-[500px] lg:w-[600px] flex">
-            <div className={`h-[500px] w-[86px] mr-1 ml-8 overflow-y-auto`}>
-              {mobileDetails && (
-                <ProductImages
-                  colorsImgs={mobileDetails.color}
-                  defaultImgs={mobileDetails.defaultImgs!}
-                  color={color}
-                  img={img!}
-                  setImg={setImg}
-                />
-              )}
-            </div>
-            <div className="h-[500px] w-[416px] flex flex-col">
-              {img && (
-                <Image
-                  className="border-gray-300 h-[416px] w-[416px] "
-                  src={img}
-                  alt="Image"
-                  height={416}
-                  width={416}
-                />
-              )}
-              <div className="h-[84px] w-full text-lg font-semibold flex items-center gap-2">
-                <AddToCartBtn
-                  pid={pid!}
-                  brandName={mobileDetails?.brandName!}
-                  productName={mobileDetails?.productName!}
-                  color={color}
-                  varient={varient!}
-                  imgs={mobileDetails?.color!}
-                  isBuying={false}
-                />
-                <BuyNowBtn
-                  pid={pid!}
-                  brandName={mobileDetails?.brandName!}
-                  productName={mobileDetails?.productName!}
-                  color={color}
-                  varient={varient!}
-                  imgs={mobileDetails?.color!}
-                  isBuying={true}
-                />
+          {windowWidth <= 460 ? (
+            smallViewport
+          ) : (
+            <div className="lg:sticky top-0 h-[500px] w-[600px]  flex">
+              <div className={`h-[500px] w-[86px] mr-1 ml-8 overflow-y-auto`}>
+                {mobileDetails && (
+                  <ProductImages
+                    colorsImgs={mobileDetails.color}
+                    defaultImgs={mobileDetails.defaultImgs!}
+                    color={color}
+                    img={img!}
+                    setImg={setImg}
+                  />
+                )}
+              </div>
+              <div className="h-[500px] w-[416px]  flex flex-col">
+                {img && (
+                  <Image
+                    className="border-gray-300 h-[416px] w-[416px]"
+                    src={img}
+                    alt="Image"
+                    height={416}
+                    width={416}
+                  />
+                )}
+                <div className="h-[84px] w-full text-lg font-semibold flex items-center gap-2">
+                  <AddToCartBtn
+                    pid={pid!}
+                    brandName={mobileDetails?.brandName!}
+                    productName={mobileDetails?.productName!}
+                    color={color}
+                    varient={varient!}
+                    imgs={mobileDetails?.color!}
+                    isBuying={false}
+                  />
+                  <BuyNowBtn
+                    pid={pid!}
+                    brandName={mobileDetails?.brandName!}
+                    productName={mobileDetails?.productName!}
+                    color={color}
+                    varient={varient!}
+                    imgs={mobileDetails?.color!}
+                    isBuying={true}
+                  />
+                </div>
               </div>
             </div>
-          </div>
+          )}
           <main className="h-fit w-full overflow-y-auto">
             <p className="text-xl font-medium">
               {mobileDetails?.brandName} {mobileDetails?.productName} ( {color}{" "}
@@ -199,71 +263,77 @@ const MobileDetails = () => {
               )}
             </div>
             {/* color options And Varient container */}
-            <div className="h-[60px] w-full mt-4">
+            <div className="lg:h-[60px] h-fit w-full mt-4">
               <div className="h-full w-full flex">
                 <div className="h-full w-[120px]">
                   <span className="font-semibold text-sm text-gray-600 dark:text-gray-300">
                     Color
                   </span>
                 </div>
-                {mobileDetails?.color.map((value, index) => (
-                  <Link
-                    key={index}
-                    href={`?category=${category}&name=${name}&color=${value.color}&storage=${storage}&memory=${memory}&pid=${pid}`}
-                    className={`h-10 px-4 flex font-semibold items-center border-2 rounded-sm mr-3 ${
-                      color === value.color &&
-                      "border-blue-500  dark:bg-gray-950 tracking-wide"
-                    }`}
-                  >
-                    {value.color}
-                  </Link>
-                ))}
+                <div className="w-fit mt-2 flex flex-wrap">
+                  {mobileDetails?.color.map((value, index) => (
+                    <Link
+                      key={index}
+                      href={`?category=${category}&name=${name}&color=${value.color}&storage=${storage}&memory=${memory}&pid=${pid}`}
+                      className={`h-10 px-4 flex font-semibold items-center border-2 rounded-sm mr-3 ${
+                        color === value.color &&
+                        "border-blue-500  dark:bg-gray-950 tracking-wide"
+                      }`}
+                    >
+                      {value.color}
+                    </Link>
+                  ))}
+                </div>
               </div>
             </div>
             {mobileDetails?.rams.length !== 1 && (
-              <div className="h-[60px] w-full mt-4">
+              <div className="lg:h-[60px] h-fit w-full mt-4">
                 <div className="h-full w-full flex">
                   <div className="h-full w-[120px]">
                     <span className="font-semibold text-sm text-gray-600 dark:text-gray-300">
                       RAM
                     </span>
                   </div>
-                  {mobileDetails?.rams.map((ram) => (
-                    <Link
-                      key={ram}
-                      href={`?category=${category}&name=${name}&color=${color}&storage=${storage}&memory=${ram}&pid=${pid}`}
-                      className={`h-9 px-5 border-2 rounded-sm flex items-center justify-center mr-3  ${
-                        memory === ram && "border-blue-500  dark:bg-gray-950"
-                      }`}
-                    >
-                      <p className="font-semibold text-xs">{ram}</p>
-                    </Link>
-                  ))}
+                  <div className="w-fit mt-2 flex flex-wrap">
+                    {mobileDetails?.rams.map((ram) => (
+                      <Link
+                        key={ram}
+                        href={`?category=${category}&name=${name}&color=${color}&storage=${storage}&memory=${ram}&pid=${pid}`}
+                        className={`h-9 px-5 border-2 rounded-sm flex items-center justify-center mr-3  ${
+                          memory === ram && "border-blue-500  dark:bg-gray-950"
+                        }`}
+                      >
+                        <p className="font-semibold text-xs">{ram}</p>
+                      </Link>
+                    ))}
+                  </div>
                 </div>
               </div>
             )}
-            <div className="h-[60px] w-full mt-4">
+            <div className="lg:h-[60px] h-fit w-full mt-4">
               <div className="h-full w-full flex">
                 <div className="h-full w-[120px]">
                   <span className="font-semibold text-sm text-gray-600 dark:text-gray-300">
                     Storage
                   </span>
                 </div>
-                {mobileDetails?.storages.map((stor) => (
-                  <Link
-                    key={stor}
-                    href={`?category=${category}&name=${name}&color=${color}&storage=${stor}&memory=${memory}&pid=${pid}`}
-                    className={`h-9 px-5 border-2 rounded-sm flex items-center justify-center mr-3  ${
-                      storage === stor && "border-blue-500  dark:bg-gray-950"
-                    }`}
-                  >
-                    <p className="font-semibold text-xs">{stor}</p>
-                  </Link>
-                ))}
+                <div className="w-fit mt-2 flex flex-wrap">
+                  {mobileDetails?.storages.map((stor) => (
+                    <Link
+                      key={stor}
+                      href={`?category=${category}&name=${name}&color=${color}&storage=${stor}&memory=${memory}&pid=${pid}`}
+                      className={`h-9 px-5 border-2 rounded-sm flex items-center justify-center mr-3  ${
+                        storage === stor && "border-blue-500  dark:bg-gray-950"
+                      }`}
+                    >
+                      <p className="font-semibold text-xs">{stor}</p>
+                    </Link>
+                  ))}
+                </div>
               </div>
             </div>
             {/** Specs container */}
-            <div className="h-fit w-full mt-2">
+            <div className="h-fit w-full mt-4">
               <div className="h-full w-full flex items-start">
                 <div className="h-full w-[135px]">
                   <span className="font-semibold text-sm text-gray-600 dark:text-gray-300">
@@ -285,7 +355,7 @@ const MobileDetails = () => {
               </div>
             </div>
             <div className="h-fit w-full border-[1px] rounded-t-md dark:border-custom mt-4">
-              <p className="h-[60px] text-2xl font-semibold pt-6 px-6 flex justify-between">
+              <p className="h-[60px] md:text-2xl text-lg font-semibold pt-6 px-6 flex justify-between">
                 Ratings & Reviews
                 <Link
                   href={`${
@@ -293,7 +363,7 @@ const MobileDetails = () => {
                       ? `/${category}/write-review?name=${mobileDetails?.productName}&color=${color}&storage=${varient?.storage}&memory=${varient?.memory}&color=${color}&pid=${pid}`
                       : `/signin`
                   }`}
-                  className="px-4 py-1 text-lg bg-gray-950 text-white dark:bg-white dark:text-gray-950 rounded-md active:scale-95 transition-all"
+                  className="md:px-4 py-1 md:text-lg px-2 bg-gray-950 text-white dark:bg-white dark:text-gray-950 rounded-md active:scale-95 transition-all"
                 >
                   Rate Product
                 </Link>

@@ -62,7 +62,7 @@ const CartItem = ({
   useEffect(() => {
     setItemsInCart((prev) => {
       const updatedItem = prev.map((prod) => {
-        if (prod.varient === varient && prod.color === color) {
+        if (prod.varient._id === varient._id && prod.color === color) {
           prod.quantity = quantityCount;
         }
         return prod;

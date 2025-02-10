@@ -9,9 +9,20 @@ import { disconnectToDB } from "@/lib/disconnectToDB";
 export async function POST(request: NextRequest) {
   await connectToDB();
 
-  try {
-    const { email, password } = await request.json();
+  const { email, password } = await request.json();
 
+  if (!email || !password)
+    return NextResponse.json(
+      {
+        success: false,
+        message: `Email and password are required`,
+      },
+      {
+        status: 400,
+      }
+    );
+
+  try {
     // Search for user
     const user = await User.findOne({ email });
 

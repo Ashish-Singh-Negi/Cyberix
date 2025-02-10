@@ -5,18 +5,25 @@ import axios from "axios";
 
 import { useCartContext } from "@/contexts/cartContext";
 import { useUserInfoContext } from "@/contexts/userInfoContext";
+import { usePriceContext } from "@/contexts/priceContext";
 
 import CartItem from "@/app/cart/components/CartItem";
 import SmallLoader from "@/app/components/SmallLoader";
 
 const Summary = () => {
-  const [loading, setLoading] = useState(false);
-
   const { info } = useUserInfoContext();
 
   const { itemsInCart, setItemsInCart } = useCartContext();
+  const {
+    noOfProducts,
+    setNoOfProducts,
+    totalAmount,
+    setTotalAmount,
+    totalDiscount,
+    setTotalDiscount,
+  } = usePriceContext();
 
-  const [itemsToBuy, setItemsToBuy] = useState<CartItemProps[] | []>([]);
+  const [loading, setLoading] = useState(false);
 
   const getItemsInCart = async () => {
     setLoading(true);
@@ -37,6 +44,29 @@ const Summary = () => {
 
     getItemsInCart();
   }, []);
+
+  useEffect(() => {
+    if (!itemsInCart) return;
+
+    setTotalAmount(0);
+    setTotalDiscount(0);
+    setNoOfProducts(0);
+
+    itemsInCart.map((prod) => {
+      if (prod.isBuying) {
+        setTotalAmount(
+          (prev) => prev + Number(prod.varient.salePrice) * prod.quantity
+        );
+        setTotalDiscount(
+          (prev) =>
+            prev +
+            (Number(prod.varient.mrp) - Number(prod.varient.salePrice)) *
+              prod.quantity
+        );
+        setNoOfProducts((prev) => prev + 1);
+      }
+    });
+  }, [itemsInCart]);
 
   if (loading)
     return (

@@ -11,24 +11,31 @@ import { useCartContext } from "@/contexts/cartContext";
 import CartItem from "./components/CartItem";
 import Price from "./components/PriceDetails";
 import Loader from "../components/Loader";
+import { usePriceContext } from "@/contexts/priceContext";
 
 const CartPage = () => {
   const { info } = useUserInfoContext();
 
   const { itemsInCart, setItemsInCart } = useCartContext();
 
-  const [totalAmount, setTotalAmount] = useState<number>(0);
-  const [discount, setDiscount] = useState<number>(0);
+  const {
+    noOfProducts,
+    setNoOfProducts,
+    totalAmount,
+    setTotalAmount,
+    totalDiscount,
+    setTotalDiscount,
+  } = usePriceContext();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   const getItemsInCart = async () => {
     try {
-      setError(false);
       const { data } = await axios.post("/api/user/cart/get", {
         id: info!.userId,
       });
+
       setItemsInCart(data.data);
       setLoading(false);
     } catch (error) {
@@ -37,30 +44,29 @@ const CartPage = () => {
   };
 
   useEffect(() => {
-    if (info) {
-      // BUGGG
-      getItemsInCart();
-      return;
-    }
-    setLoading(false);
+    if (!info) return;
+
+    getItemsInCart();
   }, [info]);
 
   useEffect(() => {
     if (!itemsInCart) return;
 
     setTotalAmount(0);
-    setDiscount(0);
+    setTotalDiscount(0);
+    setNoOfProducts(0);
 
     itemsInCart.map((prod) => {
       setTotalAmount(
         (prev) => prev + Number(prod.varient.salePrice) * prod.quantity
       );
-      setDiscount(
+      setTotalDiscount(
         (prev) =>
           prev +
           (Number(prod.varient.mrp) - Number(prod.varient.salePrice)) *
             prod.quantity
       );
+      setNoOfProducts((prev) => prev + 1);
     });
   }, [itemsInCart]);
 
@@ -91,9 +97,9 @@ const CartPage = () => {
               ))}
             </main>
             <Price
-              NoOfItems={itemsInCart.length}
+              NoOfItems={noOfProducts}
               totalAmount={totalAmount}
-              discount={discount}
+              discount={totalDiscount}
             />
           </div>
         </>

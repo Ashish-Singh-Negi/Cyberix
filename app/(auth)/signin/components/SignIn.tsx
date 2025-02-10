@@ -91,7 +91,7 @@ const SignIn = () => {
     }
   };
 
-  // TODO: Incomplete firebase Auth -----start
+  // TODO: Incomplete firebase Auth
   const signinWithGoogleHandler = async () => {
     try {
       const result = await signInWithPopup(auth, googleAuthProvider);
@@ -116,11 +116,11 @@ const SignIn = () => {
       console.error(error.message);
     }
   };
-  // end-----
+
   return (
     <main className="h-[550px] w-[500px] border-[1px] rounded-2xl border-custom flex gap-2 flex-col items-center box-border px-12">
       <p className="text-3xl font-bold text-gray-800 dark:text-gray-50 mt-10 mb-6">
-        Cyberix
+        Cyberix.
       </p>
       <h1 className="font-semibold text-2xl mb-2">Sign in to your account</h1>
       <div className="h-10 flex gap-2">
@@ -139,8 +139,8 @@ const SignIn = () => {
           sign in with Github
         </button>
       </div>
-      <p className="h-[1px] w-full relative mt-6 bg-gray-300 ">
-        <span className="absolute -top-3 left-[151px] bg-lightGray px-1 dark:bg-darkGray">
+      <p className="h-[1px] w-full flex justify-center relative mt-6 bg-gray-300 ">
+        <span className=" absolute -top-3 flex justify-center bg-lightGray px-1 dark:bg-darkGray">
           or use Email
         </span>
       </p>

@@ -19,7 +19,7 @@ const oneWeekInMs = 7 * oneDayInMs;
 const oneMonthInMs = 30 * oneDayInMs;
 const oneYearInMs = 365 * oneDayInMs;
 
-type ReviewType = Omit<Reviews, "_id"> & {
+type Review = Omit<Reviews, "_id"> & {
   rid: string;
   pid: string;
   user: string | null;
@@ -38,10 +38,8 @@ const ReviewsCard = ({
   likes,
   dislikes,
   createdAt,
-}: ReviewType) => {
+}: Review) => {
   const { refresh } = useRouter();
-
-  // const { info } = useUserInfoContext(); 
 
   const product = useSearchParams().get("category");
 

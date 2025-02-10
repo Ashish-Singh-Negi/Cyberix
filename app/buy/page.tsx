@@ -10,9 +10,11 @@ import SignIn from "../(auth)/signin/components/SignIn";
 
 import { useUserInfoContext } from "@/contexts/userInfoContext";
 import Completed from "./components/Completed";
+import { usePriceContext } from "@/contexts/priceContext";
 
 const PaymentPage = () => {
   const { info } = useUserInfoContext();
+  const { noOfProducts, totalAmount, totalDiscount } = usePriceContext();
 
   const [progressBar, setProgressBar] = useState(0);
   const [progress, setProgress] = useState([
@@ -67,7 +69,6 @@ const PaymentPage = () => {
   }
 
   useEffect(() => {
-    console.log(info);
     if (!info) {
       progress.map((val) => {
         val.status = false;
@@ -88,7 +89,7 @@ const PaymentPage = () => {
 
   return (
     <main className="h-full w-full flex justify-center">
-      <div className="h-full w-[80%]">
+      <div className="h-full w-[90%]">
         <header className="h-40 w-full flex justify-center items-center">
           <div className="relative h-20 w-[900px] flex items-center ">
             <div className="absolute top-[36px] h-[12px] w-full bg-gray-200 rounded-lg"></div>
@@ -108,7 +109,7 @@ const PaymentPage = () => {
           </div>
         </header>
         <div className="h-fit w-full flex justify-between">
-          <div className="h-full w-[1120px] px-6 ">
+          <div className="h-full w-full px-6 ">
             <header className="h-10 w-full text-xl font-semibold bg-gray-950 dark:bg-white text-white dark:text-gray-950 flex items-center px-4">
               {progress[progressBar].feildName}
             </header>
@@ -126,7 +127,13 @@ const PaymentPage = () => {
               )}
             </main>
           </div>
-          <PriceDetails NoOfItems={1} discount={23999} totalAmount={23999} />
+          {progressBar > 1 && (
+            <PriceDetails
+              noOfItems={noOfProducts}
+              discount={totalDiscount}
+              totalAmount={totalAmount}
+            />
+          )}
         </div>
       </div>
     </main>

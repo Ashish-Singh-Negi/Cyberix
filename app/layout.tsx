@@ -1,18 +1,21 @@
 import type { Metadata } from "next";
+import { ReactNode } from "react";
+
 import { Inter } from "next/font/google";
 import "./globals.css";
 
-import ThemeProvider from "./components/ThemeProvider";
 import HomePage from "./page";
-import { ReactNode } from "react";
+
+import ThemeProvider from "./components/ThemeProvider";
+import Header from "./components/Header";
+import Nav from "./components/Nav";
+
 import MenuContextProvider from "@/contexts/menuContext";
 import SigninContextProvider from "@/contexts/signinContext";
 import UserInfoContextProvider from "@/contexts/userInfoContext";
 import CartContextProvider from "@/contexts/cartContext";
-import Header from "./components/Header";
-import Nav from "./components/Nav";
-import DailogBox from "./components/DialogBox";
 import ProductContextProvider from "@/contexts/productContext";
+import PriceContextProvider from "@/contexts/priceContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -32,13 +35,15 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               <UserInfoContextProvider>
                 <ProductContextProvider>
                   <CartContextProvider>
-                    <Header />
-                    <section className="flex bg-gray-50">
-                      <Nav />
-                      <main className="h-dvh w-full pt-14 px-3 bg-gray-100 dark:bg-gray-900 overflow-y-scroll box-border">
-                        <HomePage>{children}</HomePage>
-                      </main>
-                    </section>
+                    <PriceContextProvider>
+                      <Header />
+                      <section className="flex bg-gray-50">
+                        <Nav />
+                        <main className="h-dvh w-full pt-14 px-3 bg-gray-100 dark:bg-gray-900 overflow-y-scroll box-border">
+                          <HomePage>{children}</HomePage>
+                        </main>
+                      </section>
+                    </PriceContextProvider>
                   </CartContextProvider>
                 </ProductContextProvider>
               </UserInfoContextProvider>
