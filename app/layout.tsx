@@ -39,7 +39,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                       <Header />
                       <section className="flex bg-gray-50">
                         <Nav />
-                        <main className="h-dvh w-full pt-14 px-3 bg-gray-100 dark:bg-gray-900 overflow-y-scroll box-border">
+                        <main className="h-dvh w-full px-3 bg-gray-100 dark:bg-gray-900 overflow-y-scroll box-border">
                           <HomePage>{children}</HomePage>
                         </main>
                       </section>

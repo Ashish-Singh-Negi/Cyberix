@@ -41,7 +41,7 @@ const Nav = () => {
     <nav
       className={`${
         pathname === "/buy" && "hidden"
-      } h-screen w-[216px] bg-white pt-14 dark:bg-gray-900 border-r-2 dark:border-gray-500 ${
+      } h-screen w-[216px] bg-white dark:bg-gray-900 border-r-2 dark:border-gray-500 ${
         menuOpen ? "block absolute z-[9]" : "hidden"
       } lg:block lg:static`}
     >

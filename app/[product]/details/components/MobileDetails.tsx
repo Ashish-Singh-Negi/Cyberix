@@ -145,7 +145,7 @@ const MobileDetails = () => {
             />
           )}
         </div>
-        <div className="absolute bg-white dark:bg-gray-950 bottom-0 h-12 text-lg font-semibold flex items-center gap-3">
+        <div className="fixed bg-white dark:bg-gray-950 bottom-0 h-12 text-lg font-semibold flex items-center gap-3">
           <AddToCartBtn
             pid={pid!}
             brandName={mobileDetails?.brandName!}
